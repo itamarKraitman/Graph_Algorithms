@@ -46,18 +46,18 @@ public class DWGraph implements DirectedWeightedGraph {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
     public NodeData getNode(int key) {
-        return null;
+        return this.Nodes.get(key);
     }
 
     @Override
     public EdgeData getEdge(int src, int dest) {
-        return null;
+        if(this.Nodes.containsKey(src) && this.Nodes.containsKey(dest)) {
+            return this.Edges.get(src).get(dest);
+        } else throw new IllegalArgumentException("This Graph Doesn't Hold This Edge! Please Enter A Valid Value!");
     }
 
     @Override
@@ -97,12 +97,12 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public int nodeSize() {
-        return 0;
+        return Nodes.size();
     }
 
     @Override
     public int edgeSize() {
-        return 0;
+        return Edges.size();
     }
 
     @Override
