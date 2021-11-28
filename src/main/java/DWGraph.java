@@ -3,9 +3,17 @@ import main.java.api.DirectedWeightedGraph;
 import main.java.api.EdgeData;
 import main.java.api.NodeData;
 
+import java.util.HashMap;
+import com.google.gson.Gson;
 import java.util.Iterator;
 
 public class DWGraph implements DirectedWeightedGraph {
+
+    public DWGraph(String filename){
+        Gson gson = new Gson();
+
+
+    }
 
     @Override
     public NodeData getNode(int key) {

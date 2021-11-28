@@ -1,6 +1,7 @@
 package main.java;
 import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
+import com.google.gson.Gson;
 
 /**
  * This class is the main class for Ex2 - your implementation will be tested using this class.
@@ -34,7 +35,7 @@ public class Ex2 {
         return ans;
     }
     /**
-     * This static function will run your GUI using the json fime.
+     * This static function will run your GUI using the json file.
      * @param json_file - a json file (e.g., G1.json - G3.gson)
      *
      */

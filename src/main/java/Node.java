@@ -1,26 +1,27 @@
 package main.java;
+
 import main.java.api.GeoLocation;
 import main.java.api.NodeData;
 
 public class Node implements NodeData {
 
     int key;
-    Geo_Location location;
+    Geo_Location position;
     String info;
     int tag;
 
     // Constructor
-    public Node(int key, Geo_Location loc){
+    public Node(int key, Geo_Location loc) {
         this.key = key;
-        this.location = new Geo_Location(loc);
+        this.position = new Geo_Location(loc);
         // TODO: add info generation
         // TODO: add tag
     }
 
     // Deep copy constructor
-    public Node(Node n){
+    public Node(Node n) {
         this.key = n.key;
-        this.location = new Geo_Location(n.location);
+        this.position = new Geo_Location(n.position);
         this.info = n.info;
         this.tag = n.tag;
     }
@@ -31,13 +32,13 @@ public class Node implements NodeData {
     }
 
     @Override
-    public GeoLocation getLocation() {
-        return this.location;
+    public GeoLocation getPosition() {
+        return this.position;
     }
 
     @Override
-    public void setLocation(GeoLocation p) {
-        this.location = new Geo_Location((Geo_Location) p);
+    public void setPosition(GeoLocation p) {
+        this.position = new Geo_Location((Geo_Location) p);
     }
 
     @Override
