@@ -42,4 +42,8 @@ public class Geo_Location implements GeoLocation {
         double d_z = Math.pow((g.z() - this.z), 2);
         return Math.sqrt(d_x + d_y + d_z);
     }
+
+    public String toString() {
+        return "(" + this.x + "," + this.y + "," + this.z + ")";
+    }
 }
