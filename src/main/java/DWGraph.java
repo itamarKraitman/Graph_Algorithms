@@ -1,16 +1,46 @@
 package main.java;
-import main.java.api.DirectedWeightedGraph;
-import main.java.api.EdgeData;
-import main.java.api.NodeData;
 
+import com.google.gson.*;
+import main.java.api.*;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
-import com.google.gson.Gson;
 import java.util.Iterator;
 
 public class DWGraph implements DirectedWeightedGraph {
 
     public DWGraph(String filename){
-        Gson gson = new Gson();
+        File input = new File(filename);
+        ArrayList<Edge> edges = new ArrayList<Edge>();
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        try {
+            JsonElement fileElement = JsonParser.parseReader(new FileReader(input));
+            JsonObject fileObject = fileElement.getAsJsonObject();
+            JsonArray arrayOfEdges = fileObject.get("Edges").getAsJsonArray();
+            for (JsonElement graphElement : arrayOfEdges){
+                JsonObject graphEdge = graphElement.getAsJsonObject();
+                int source = graphEdge.get("src").getAsInt();
+                double weight = graphEdge.get("w").getAsDouble();
+                int destination = graphEdge.get("dest").getAsInt();
+                Edge edge = new Edge(source,destination,weight);
+                edges.add(edge);
+            }
+            JsonArray arrayOfNodes = fileObject.get("Nodes").getAsJsonArray();
+            for(JsonElement graphElement : arrayOfNodes){
+                JsonObject graphNode = graphElement.getAsJsonObject();
+                String position = graphNode.get("pos").getAsString();
+                String[] positions = position.split("[,]");
+                double x = Double.parseDouble(positions[0]);
+                double y = Double.parseDouble(positions[1]);
+                double z = Double.parseDouble(positions[2]);
+                int id = graphNode.get("id").getAsInt();
+                Geo_Location pos = new Geo_Location(x,y,z);
+                Node node = new Node(id, pos);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
 
     }

@@ -3,11 +3,11 @@ import main.java.api.EdgeData;
 
 public class Edge implements EdgeData {
 
-    int src;
-    int dest;
-    double weight;
-    String info;
-    int tag;
+    private final int src;
+    private final double weight;
+    private final int dest;
+    private transient String info;
+    private transient int tag;
 
     // Constructor
     public Edge(int source, int destination, double weight) {

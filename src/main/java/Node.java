@@ -5,10 +5,10 @@ import main.java.api.NodeData;
 
 public class Node implements NodeData {
 
-    int key;
-    Geo_Location position;
-    String info;
-    int tag;
+    private Geo_Location position;
+    private final int key;
+    private transient String info;
+    private transient int tag;
 
     // Constructor
     public Node(int key, Geo_Location loc) {

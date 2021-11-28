@@ -3,9 +3,9 @@ import main.java.api.GeoLocation;
 
 public class Geo_Location implements GeoLocation {
 
-    double x;
-    double y;
-    double z;
+    private final double x;
+    private final double y;
+    private final double z;
 
     // Constructor
     Geo_Location(double a, double b, double c) {
