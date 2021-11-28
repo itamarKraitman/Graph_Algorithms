@@ -63,12 +63,15 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public void addNode(NodeData n) {
-
+        Nodes.put(n.getKey(), (Node) n);
     }
 
     @Override
     public void connect(int src, int dest, double w) {
-
+        Edge toAdd = new Edge(src,dest,w);
+        HashMap<Integer, Edge> tempEdge = new HashMap<>();
+        tempEdge.put(toAdd.getDest(), toAdd);
+        Edges.put(toAdd.getSrc(), tempEdge);
     }
 
     @Override
@@ -88,12 +91,14 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public NodeData removeNode(int key) {
-        return null;
+        return Nodes.remove(key);
     }
 
     @Override
     public EdgeData removeEdge(int src, int dest) {
-        return null;
+        if (this.Nodes.containsKey(src) && this.Nodes.containsKey(dest)) {
+            return Edges.get(src).remove(dest); // TODO: test if further removel needed because of nested
+        } else throw new IllegalArgumentException("This Graph Doesn't Hold This Edge! Please Enter A Valid Value!");
     }
 
     @Override
