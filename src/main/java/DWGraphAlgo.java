@@ -1,10 +1,14 @@
-import api.DirectedWeightedGraph;
-import api.DirectedWeightedGraphAlgorithms;
-import api.NodeData;
+package main.java;
+import main.java.api.DirectedWeightedGraph;
+import main.java.api.DirectedWeightedGraphAlgorithms;
+import main.java.api.NodeData;
+import main.java.api.DirectedWeightedGraph;
+import main.java.api.NodeData;
 
 import java.util.List;
 
 public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
+
     @Override
     public void init(DirectedWeightedGraph g) {
 
@@ -39,6 +43,7 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     public NodeData center() {
         return null;
     }
+
 
     @Override
     public List<NodeData> tsp(List<NodeData> cities) {

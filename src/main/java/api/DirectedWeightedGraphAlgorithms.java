@@ -1,4 +1,4 @@
-package api;
+package main.java.api;
 import java.util.List;
 /**
  * This interface represents a Directed (positive) Weighted Graph Theory Algorithms including:

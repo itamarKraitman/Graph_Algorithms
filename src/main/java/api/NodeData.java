@@ -1,4 +1,4 @@
-package api;
+package main.java.api;
 
 /**
  * This interface represents the set of operations applicable on a 

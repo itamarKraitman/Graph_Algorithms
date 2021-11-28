@@ -1,5 +1,6 @@
-import api.GeoLocation;
-import api.NodeData;
+package main.java;
+import main.java.api.GeoLocation;
+import main.java.api.NodeData;
 
 public class Node implements NodeData {
 

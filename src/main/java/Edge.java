@@ -1,4 +1,5 @@
-import api.EdgeData;
+package main.java;
+import main.java.api.EdgeData;
 
 public class Edge implements EdgeData {
 

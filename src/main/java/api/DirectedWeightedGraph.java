@@ -1,4 +1,4 @@
-package api;
+package main.java.api;
 import java.util.Iterator;
 /**
  * This interface represents a Directional Weighted Graph,

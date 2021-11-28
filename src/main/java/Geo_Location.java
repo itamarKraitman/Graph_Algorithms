@@ -1,4 +1,5 @@
-import api.GeoLocation;
+package main.java;
+import main.java.api.GeoLocation;
 
 public class Geo_Location implements GeoLocation {
 
