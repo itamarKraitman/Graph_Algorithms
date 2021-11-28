@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class DWGraph implements DirectedWeightedGraph {
+    
+    private HashMap<Integer,Node> Nodes = new HashMap<>();
+    private HashMap<Integer,HashMap<Integer, Edge>> Edges = new HashMap<>();
+    private int modeCount = 0;
 
     public DWGraph(String filename){
         File input = new File(filename);
-        ArrayList<Edge> edges = new ArrayList<Edge>();
-        ArrayList<Node> nodes = new ArrayList<Node>();
         try {
             JsonElement fileElement = JsonParser.parseReader(new FileReader(input));
             JsonObject fileObject = fileElement.getAsJsonObject();
@@ -23,7 +25,9 @@ public class DWGraph implements DirectedWeightedGraph {
                 double weight = graphEdge.get("w").getAsDouble();
                 int destination = graphEdge.get("dest").getAsInt();
                 Edge edge = new Edge(source,destination,weight);
-                edges.add(edge);
+                HashMap<Integer, Edge> tempEdge = new HashMap<>();
+                tempEdge.put(edge.getDest(), edge);
+                Edges.put(edge.getSrc(), tempEdge);
             }
             JsonArray arrayOfNodes = fileObject.get("Nodes").getAsJsonArray();
             for(JsonElement graphElement : arrayOfNodes){
@@ -36,6 +40,7 @@ public class DWGraph implements DirectedWeightedGraph {
                 int id = graphNode.get("id").getAsInt();
                 Geo_Location pos = new Geo_Location(x,y,z);
                 Node node = new Node(id, pos);
+                Nodes.put(node.getKey(), node);
             }
 
         } catch (FileNotFoundException e) {
@@ -102,6 +107,6 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public int getMC() {
-        return 0;
+        return this.modeCount;
     }
 }
