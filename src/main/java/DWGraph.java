@@ -17,8 +17,8 @@ import java.util.Map;
 
 public class DWGraph implements DirectedWeightedGraph {
 
-    private Map<Integer, Node> Nodes = new HashMap<>();
-    private Map<Integer, HashMap<Integer, Edge>> Edges = new HashMap<>();
+    public Map<Integer, Node> Nodes = new HashMap<>();
+    public Map<Integer, HashMap<Integer, Edge>> Edges = new HashMap<>();
     private int modCount = 0;
 
     public DWGraph(String filename) {
@@ -34,8 +34,12 @@ public class DWGraph implements DirectedWeightedGraph {
                 int destination = graphEdge.get("dest").getAsInt();
                 Edge edge = new Edge(source, destination, weight);
                 HashMap<Integer, Edge> tempEdge = new HashMap<>();
-                tempEdge.put(edge.getDest(), edge);
-                Edges.put(edge.getSrc(), tempEdge);
+                if (Edges.containsKey(source)) {
+                    Edges.get(source).put(destination, edge);
+                } else {
+                    tempEdge.put(edge.getDest(), edge);
+                    Edges.put(edge.getSrc(), tempEdge);
+                }
             }
             JsonArray arrayOfNodes = fileObject.get("Nodes").getAsJsonArray();
             for (JsonElement graphElement : arrayOfNodes) {
@@ -62,15 +66,20 @@ public class DWGraph implements DirectedWeightedGraph {
     }
 
     @Override
-    public EdgeData getEdge(int src, int dest) throws IllegalArgumentException {
+    public EdgeData getEdge(int src, int dest) {
         if (this.Nodes.containsKey(src) && this.Nodes.containsKey(dest)) {
             return this.Edges.get(src).get(dest);
         } else throw new IllegalArgumentException("This Graph Doesn't Hold This Edge! Please Enter A Valid Value!");
     }
 
     @Override
-    public void addNode(NodeData n) {
-        Nodes.put(n.getKey(), (Node) n);
+    public void addNode(NodeData n)  {
+        int key = n.getKey();
+        if(this.Nodes.containsKey(n.getKey())) {
+            key = Nodes.size();
+        }
+        Node toAdd = new Node(key, (Geo_Location) n.getPosition());
+        Nodes.put(key,toAdd);
         this.modCount++;
     }
 
@@ -78,8 +87,12 @@ public class DWGraph implements DirectedWeightedGraph {
     public void connect(int src, int dest, double w) {
         Edge toAdd = new Edge(src, dest, w);
         HashMap<Integer, Edge> tempEdge = new HashMap<>();
-        tempEdge.put(toAdd.getDest(), toAdd);
-        Edges.put(toAdd.getSrc(), tempEdge);
+        if (Edges.containsKey(src)) {
+            Edges.get(src).put(dest, toAdd);
+        } else {
+            tempEdge.put(toAdd.getDest(), toAdd);
+            Edges.put(toAdd.getSrc(), tempEdge);
+        }
         this.modCount++;
     }
 
@@ -89,7 +102,7 @@ public class DWGraph implements DirectedWeightedGraph {
         while(it.hasNext()){
             Map.Entry<Integer,Node> node = it.next();
         }
-        return it;
+        return null;
     }
 
     @Override
@@ -110,9 +123,9 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public EdgeData removeEdge(int src, int dest) {
-        if (this.Nodes.containsKey(src) && this.Nodes.containsKey(dest)) {
+        if (this.Nodes.containsKey(src) && this.Nodes.containsKey(dest) && this.Edges.get(src).containsKey(dest)) {
             this.modCount++;
-            return Edges.get(src).remove(dest); // TODO: test if further removal needed because of nested maps
+            return Edges.get(src).remove(dest);
         } else throw new IllegalArgumentException("This Graph Doesn't Hold This Edge! Please Enter A Valid Value!");
     }
 
@@ -123,7 +136,11 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public int edgeSize() {
-        return Edges.size();
+        int total = 0;
+        for(int i = 0;i<Edges.size();i++){
+            total = total + Edges.get(i).size();
+        }
+        return total;
     }
 
     @Override
