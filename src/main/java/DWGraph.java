@@ -13,11 +13,12 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class DWGraph implements DirectedWeightedGraph {
 
-    private HashMap<Integer, Node> Nodes = new HashMap<>();
-    private HashMap<Integer, HashMap<Integer, Edge>> Edges = new HashMap<>();
+    private Map<Integer, Node> Nodes = new HashMap<>();
+    private Map<Integer, HashMap<Integer, Edge>> Edges = new HashMap<>();
     private int modCount = 0;
 
     public DWGraph(String filename) {
@@ -84,7 +85,11 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public Iterator<NodeData> nodeIter() {
-        return null;
+        Iterator<Map.Entry<Integer,Node>> it = Nodes.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<Integer,Node> node = it.next();
+        }
+        return it;
     }
 
     @Override
