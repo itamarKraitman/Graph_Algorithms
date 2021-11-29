@@ -1,4 +1,5 @@
 package main.java;
+
 import main.java.api.GeoLocation;
 
 public class Geo_Location implements GeoLocation {
@@ -8,13 +9,13 @@ public class Geo_Location implements GeoLocation {
     private final double z;
 
     // Constructor
-    Geo_Location(double a, double b, double c) {
-        this.x = a;
-        this.y = b;
-        this.z = c;
+    Geo_Location(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
-    Geo_Location(Geo_Location g){
+    Geo_Location(Geo_Location g) {
         this.x = g.x();
         this.y = g.y();
         this.z = g.z();

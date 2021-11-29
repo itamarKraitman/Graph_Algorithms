@@ -1,9 +1,15 @@
 package main.java;
 
-import com.google.gson.*;
-import main.java.api.*;
-
-import java.io.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import main.java.api.DirectedWeightedGraph;
+import main.java.api.EdgeData;
+import main.java.api.NodeData;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +18,7 @@ public class DWGraph implements DirectedWeightedGraph {
 
     private HashMap<Integer, Node> Nodes = new HashMap<>();
     private HashMap<Integer, HashMap<Integer, Edge>> Edges = new HashMap<>();
-    private int modeCount = 0;
+    private int modCount = 0;
 
     public DWGraph(String filename) {
         File input = new File(filename);
@@ -64,14 +70,16 @@ public class DWGraph implements DirectedWeightedGraph {
     @Override
     public void addNode(NodeData n) {
         Nodes.put(n.getKey(), (Node) n);
+        this.modCount++;
     }
 
     @Override
     public void connect(int src, int dest, double w) {
-        Edge toAdd = new Edge(src,dest,w);
+        Edge toAdd = new Edge(src, dest, w);
         HashMap<Integer, Edge> tempEdge = new HashMap<>();
         tempEdge.put(toAdd.getDest(), toAdd);
         Edges.put(toAdd.getSrc(), tempEdge);
+        this.modCount++;
     }
 
     @Override
@@ -91,13 +99,15 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public NodeData removeNode(int key) {
+        this.modCount++;
         return Nodes.remove(key);
     }
 
     @Override
     public EdgeData removeEdge(int src, int dest) {
         if (this.Nodes.containsKey(src) && this.Nodes.containsKey(dest)) {
-            return Edges.get(src).remove(dest); // TODO: test if further removel needed because of nested
+            this.modCount++;
+            return Edges.get(src).remove(dest); // TODO: test if further removal needed because of nested maps
         } else throw new IllegalArgumentException("This Graph Doesn't Hold This Edge! Please Enter A Valid Value!");
     }
 
@@ -113,7 +123,7 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public int getMC() {
-        return this.modeCount;
+        return this.modCount;
     }
 
     public static ArrayList<HashMap<Integer, Edge>> getAllEdges(DWGraph graph) {

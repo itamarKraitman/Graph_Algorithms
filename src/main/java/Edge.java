@@ -1,4 +1,5 @@
 package main.java;
+
 import main.java.api.EdgeData;
 
 public class Edge implements EdgeData {
@@ -14,12 +15,12 @@ public class Edge implements EdgeData {
         this.src = source;
         this.dest = destination;
         this.weight = weight;
-        // TODO: add this.string = something - create the string info on object creation
-        // TODO: add this.tag - when we figure out what this is for
+        // Info is generated through toString() & setInfo()
+        // Tag is generated through setTag()
     }
 
     // Deep copy constructor
-    public Edge(Edge copy){
+    public Edge(Edge copy) {
         this.src = copy.src;
         this.dest = copy.dest;
         this.weight = copy.weight;
