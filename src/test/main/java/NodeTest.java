@@ -123,22 +123,6 @@ class NodeTest {
         assertEquals(s3, n3.getInfo());
     }
 
-  /*
-   This test is redundant since getInfo() always return the current
-   info on the Node.
-   @Test
-    void setInfo() {
-        String s4 = "\"pos:\" \"2.0,2.0,0.0\",\n\"id:\" 0";
-        String s5 = "\"pos:\" \"10.0,10.0,0.0\",\n\"id:\" 1";
-        String s6 = "\"pos:\" \"5.0,5.0,0.0\",\n\"id:\" 2";
-        n1.setInfo(s4);
-        n2.setInfo(s5);
-        n3.setInfo(s6);
-        assertEquals(s4, n1.getInfo());
-        assertEquals(s5, n2.getInfo());
-        assertEquals(s6, n3.getInfo());
-    }
-*/
     @Test
     void getTag() {
         assertEquals(0, n1.getTag());

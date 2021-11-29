@@ -15,8 +15,8 @@ public class Edge implements EdgeData {
         this.src = source;
         this.dest = destination;
         this.weight = weight;
-        // Info is generated through toString() & setInfo()
-        // Tag is generated through setTag()
+        this.info = this.getInfo();
+        this.tag = 0;
     }
 
     // Deep copy constructor
@@ -46,7 +46,7 @@ public class Edge implements EdgeData {
 
     @Override
     public String getInfo() {
-        return this.toString();
+        return "\"src\": "+this.getSrc()+",\n\"w\": "+this.getWeight()+",\n\"dest\": "+this.getDest();
     }
 
     @Override
@@ -65,12 +65,12 @@ public class Edge implements EdgeData {
     }
 
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("src: ").append(this.src).append(".\n");
-        sb.append("dest: ").append(this.dest).append(".\n");
-        sb.append("weight: ").append(this.weight).append(".\n");
-        sb.append("tag: ").append(this.tag).append(".\n");
-        return sb.substring(0);
-    }
+//    public String toString() {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("src: ").append(this.src).append(".\n");
+//        sb.append("dest: ").append(this.dest).append(".\n");
+//        sb.append("weight: ").append(this.weight).append(".\n");
+//        sb.append("tag: ").append(this.tag).append(".\n");
+//        return sb.substring(0);
+//    }
 }
