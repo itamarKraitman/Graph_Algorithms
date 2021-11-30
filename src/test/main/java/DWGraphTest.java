@@ -1,6 +1,10 @@
 package main.java;
 
+import main.java.api.NodeData;
 import org.junit.jupiter.api.Test;
+
+
+import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,6 +84,11 @@ class DWGraphTest {
     // TODO : fill the Iterators test below
     @Test
     void nodeIter() {
+        Iterator<NodeData> testIt = testGraph.nodeIter();
+       while(testIt.hasNext()){
+           NodeData n = testIt.next();
+
+       }
     }
 
     @Test
@@ -94,6 +103,7 @@ class DWGraphTest {
     void removeNode() {
         testGraph.removeNode(0);
         testGraph.removeNode(1);
+        assertFalse(testGraph.Edges.containsKey(0));
         assertFalse(testGraph.Nodes.containsKey(0));
         assertFalse(testGraph.Nodes.containsKey(1));
     }
@@ -143,6 +153,7 @@ class DWGraphTest {
         assertEquals(4,testGraph.getMC());
     }
 
+    // TODO: add these testers
     @Test
     void getAllEdges() {
     }

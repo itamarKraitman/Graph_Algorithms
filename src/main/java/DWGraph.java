@@ -17,8 +17,8 @@ import java.util.Map;
 
 public class DWGraph implements DirectedWeightedGraph {
 
-    public Map<Integer, Node> Nodes = new HashMap<>();
-    public Map<Integer, HashMap<Integer, Edge>> Edges = new HashMap<>();
+    public Map<Integer, NodeData> Nodes = new HashMap<>();
+    public Map<Integer, HashMap<Integer, EdgeData>> Edges = new HashMap<>();
     private int modCount = 0;
 
     public DWGraph(String filename) {
@@ -33,7 +33,7 @@ public class DWGraph implements DirectedWeightedGraph {
                 double weight = graphEdge.get("w").getAsDouble();
                 int destination = graphEdge.get("dest").getAsInt();
                 Edge edge = new Edge(source, destination, weight);
-                HashMap<Integer, Edge> tempEdge = new HashMap<>();
+                HashMap<Integer, EdgeData> tempEdge = new HashMap<>();
                 if (Edges.containsKey(source)) {
                     Edges.get(source).put(destination, edge);
                 } else {
@@ -85,11 +85,12 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public void connect(int src, int dest, double w) {
+        // TODO: add check if Edge already exists
         Edge toAdd = new Edge(src, dest, w);
-        HashMap<Integer, Edge> tempEdge = new HashMap<>();
         if (Edges.containsKey(src)) {
             Edges.get(src).put(dest, toAdd);
         } else {
+            HashMap<Integer, EdgeData> tempEdge = new HashMap<>();
             tempEdge.put(toAdd.getDest(), toAdd);
             Edges.put(toAdd.getSrc(), tempEdge);
         }
@@ -98,15 +99,46 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public Iterator<NodeData> nodeIter() {
-        Iterator<Map.Entry<Integer,Node>> it = Nodes.entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry<Integer,Node> node = it.next();
-        }
-        return null;
+       return new Iterator<NodeData>(){
+
+           private final Iterator<NodeData> it = Nodes.values().iterator();
+           private int counter = getMC();
+            private NodeData value = null;
+
+           @Override
+           public boolean hasNext() {
+               if(getMC()!=counter){
+                   throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+               }
+               return it.hasNext();
+           }
+
+           @Override
+           public NodeData next() {
+               if(getMC()!=counter){
+                   throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+               }
+               value = it.next();
+               return value;
+           }
+
+           @Override
+           public void remove() {
+               if(value!=null){
+                   removeNode(value.getKey());
+                   this.counter = getMC();
+               }
+           }
+       };
+
     }
 
     @Override
     public Iterator<EdgeData> edgeIter() {
+       // if(this.edgeIt == 0){
+         //   this.edgeIt = this.modCount;
+
+      //  }
         return null;
     }
 
@@ -117,6 +149,8 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public NodeData removeNode(int key) {
+        // TODO: add function to remove all connected edges
+        this.Edges.remove(key);
         this.modCount++;
         return Nodes.remove(key);
     }
@@ -148,18 +182,18 @@ public class DWGraph implements DirectedWeightedGraph {
         return this.modCount;
     }
 
-    public static ArrayList<HashMap<Integer, Edge>> getAllEdges(DWGraph graph) {
-        ArrayList<HashMap<Integer, Edge>> allEdges = new ArrayList<>();
+    public static ArrayList<HashMap<Integer, EdgeData>> getAllEdges(DWGraph graph) {
+        ArrayList<HashMap<Integer, EdgeData>> allEdges = new ArrayList<>();
         for (int i = 0; i < graph.Edges.size(); i++) {
             allEdges.add(graph.Edges.get(i));
         }
         return allEdges;
     }
 
-    public ArrayList<HashMap<Integer, Edge>> getEdgesFrom(int nodeId) {
-        ArrayList<HashMap<Integer, Edge>> ans = new ArrayList<>();
+    public ArrayList<HashMap<Integer, EdgeData>> getEdgesFrom(int nodeId) {
+        ArrayList<HashMap<Integer, EdgeData>> ans = new ArrayList<>();
         for (int i = 0; i < this.Edges.size(); i++) {
-            HashMap<Integer, Edge> current = this.Edges.get(i);
+            HashMap<Integer, EdgeData> current = this.Edges.get(i);
             if (current.containsKey(nodeId))
                 ans.add(current);
         }
