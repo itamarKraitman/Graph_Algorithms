@@ -94,15 +94,15 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public Iterator<NodeData> nodeIter() {
-       return new Iterator<NodeData>(){
+       return new Iterator<>() {
 
            private final Iterator<NodeData> it = Nodes.values().iterator();
            private int counter = getMC();
-            private NodeData value = null;
+           private NodeData value = null;
 
            @Override
            public boolean hasNext() {
-               if(getMC()!=counter){
+               if (getMC() != counter) {
                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                }
                return it.hasNext();
@@ -110,7 +110,7 @@ public class DWGraph implements DirectedWeightedGraph {
 
            @Override
            public NodeData next() {
-               if(getMC()!=counter){
+               if (getMC() != counter) {
                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                }
                value = it.next();
@@ -119,10 +119,10 @@ public class DWGraph implements DirectedWeightedGraph {
 
            @Override
            public void remove() {
-               if(getMC()!=counter){
+               if (getMC() != counter) {
                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                }
-               if(value!=null){
+               if (value != null) {
                    removeNode(value.getKey());
                    this.counter = getMC();
                }
@@ -133,16 +133,16 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public Iterator<EdgeData> edgeIter() {
-        return new Iterator<EdgeData>(){
+        return new Iterator<>() {
 
-            private final Iterator<HashMap<Integer,EdgeData>> it = Edges.values().iterator();
+            private final Iterator<HashMap<Integer, EdgeData>> it = Edges.values().iterator();
             private Iterator<EdgeData> edgeIt = null;
             private EdgeData value = null;
             public int counter = getMC();
 
             @Override
             public boolean hasNext() {
-                if(getMC()!=counter) {
+                if (getMC() != counter) {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
                 return it.hasNext() && (edgeIt == null || edgeIt.hasNext());
@@ -150,10 +150,10 @@ public class DWGraph implements DirectedWeightedGraph {
 
             @Override
             public EdgeData next() {
-                if(getMC()!=counter){
+                if (getMC() != counter) {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
-                if(edgeIt == null || !edgeIt.hasNext()){
+                if (edgeIt == null || !edgeIt.hasNext()) {
                     edgeIt = it.next().values().iterator();
                 }
                 value = edgeIt.next();
@@ -162,11 +162,11 @@ public class DWGraph implements DirectedWeightedGraph {
 
             @Override
             public void remove() {
-                if(getMC()!=counter){
+                if (getMC() != counter) {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
-                if(value!=null){
-                    removeEdge(value.getSrc(),value.getDest());
+                if (value != null) {
+                    removeEdge(value.getSrc(), value.getDest());
                     this.counter = getMC();
                 }
             }
@@ -176,7 +176,10 @@ public class DWGraph implements DirectedWeightedGraph {
     // Iterator over Edges going OUT of a node
     @Override
     public Iterator<EdgeData> edgeIter(int node_id) {
-        return new Iterator<EdgeData>() {
+        if(!Nodes.containsKey(node_id)){
+            throw new IllegalArgumentException("Node Doesn't Exist In The Graph!!!");
+        }
+        return new Iterator<>() {
 
             private final Iterator<EdgeData> it = Edges.get(node_id).values().iterator();
             private int counter = getMC();
@@ -205,7 +208,7 @@ public class DWGraph implements DirectedWeightedGraph {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
                 if (value != null) {
-                    removeEdge(value.getSrc(),value.getDest());
+                    removeEdge(value.getSrc(), value.getDest());
                     this.counter = getMC();
                 }
             }
