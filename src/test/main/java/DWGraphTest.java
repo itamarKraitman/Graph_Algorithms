@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.api.EdgeData;
 import main.java.api.NodeData;
 import org.junit.jupiter.api.Test;
 
@@ -93,6 +94,8 @@ class DWGraphTest {
 
     @Test
     void edgeIter() {
+        Iterator<EdgeData> testIt = testGraph.edgeIter();
+        assertTrue(testIt.hasNext());
     }
 
     @Test

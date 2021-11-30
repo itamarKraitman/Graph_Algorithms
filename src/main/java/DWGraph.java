@@ -119,6 +119,9 @@ public class DWGraph implements DirectedWeightedGraph {
 
            @Override
            public void remove() {
+               if(getMC()!=counter){
+                   throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+               }
                if(value!=null){
                    removeNode(value.getKey());
                    this.counter = getMC();
@@ -130,16 +133,83 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public Iterator<EdgeData> edgeIter() {
-       // if(this.edgeIt == 0){
-         //   this.edgeIt = this.modCount;
+        return new Iterator<EdgeData>(){
 
-      //  }
-        return null;
+            private final Iterator<HashMap<Integer,EdgeData>> it = Edges.values().iterator();
+            private Iterator<EdgeData> edgeIt = null;
+            private EdgeData value = null;
+            public int counter = getMC();
+
+            @Override
+            public boolean hasNext() {
+                if(getMC()!=counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                return it.hasNext() && (edgeIt == null || edgeIt.hasNext());
+            }
+
+            @Override
+            public EdgeData next() {
+                if(getMC()!=counter){
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                if(edgeIt == null || !edgeIt.hasNext()){
+                    edgeIt = it.next().values().iterator();
+                }
+                value = edgeIt.next();
+                return value;
+            }
+
+            @Override
+            public void remove() {
+                if(getMC()!=counter){
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                if(value!=null){
+                    removeEdge(value.getSrc(),value.getDest());
+                    this.counter = getMC();
+                }
+            }
+        };
     }
 
+    // Iterator over Edges going OUT of a node
     @Override
     public Iterator<EdgeData> edgeIter(int node_id) {
-        return null;
+        return new Iterator<EdgeData>() {
+
+            private final Iterator<EdgeData> it = Edges.get(node_id).values().iterator();
+            private int counter = getMC();
+            private EdgeData value = null;
+
+            @Override
+            public boolean hasNext() {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                return it.hasNext();
+            }
+
+            @Override
+            public EdgeData next() {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                value = it.next();
+                return value;
+            }
+
+            @Override
+            public void remove() {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                if (value != null) {
+                    removeEdge(value.getSrc(),value.getDest());
+                    this.counter = getMC();
+                }
+            }
+        };
     }
 
     @Override
