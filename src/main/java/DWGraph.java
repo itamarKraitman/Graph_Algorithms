@@ -1,12 +1,7 @@
 package main.java;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import main.java.api.DirectedWeightedGraph;
-import main.java.api.EdgeData;
-import main.java.api.NodeData;
+import com.google.gson.*;
+import main.java.api.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
