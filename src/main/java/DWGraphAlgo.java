@@ -3,26 +3,26 @@ package main.java;
 import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
 import main.java.api.NodeData;
-import main.java.api.DirectedWeightedGraph;
-import main.java.api.NodeData;
 
 import java.util.List;
 
 public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
 
+    public DWGraph graph;
+
     @Override
     public void init(DirectedWeightedGraph g) {
-
+        this.graph = (DWGraph)g;
     }
 
     @Override
     public DirectedWeightedGraph getGraph() {
-        return null;
+        return this.graph;
     }
 
     @Override
     public DirectedWeightedGraph copy() {
-        return null;
+        return new DWGraph(this.graph);
     }
 
     @Override
@@ -57,6 +57,12 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public boolean load(String file) {
-        return false;
+        try {
+            this.graph = new DWGraph(file);
+            return true;
+        } catch (RuntimeException e) {
+            System.out.println("File Not Found!");
+            return false;
+        }
     }
 }

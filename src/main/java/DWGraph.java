@@ -55,6 +55,12 @@ public class DWGraph implements DirectedWeightedGraph {
         }
     }
 
+    public DWGraph(DWGraph g){
+        this.Nodes = g.Nodes;
+        this.Edges = g.Edges;
+        this.modCount = g.modCount;
+    }
+
     @Override
     public NodeData getNode(int key) {
         return this.Nodes.get(key);
@@ -69,6 +75,7 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public void addNode(NodeData n)  {
+        // TODO: decide how to handle if key value already exists
         int key = n.getKey();
         if(this.Nodes.containsKey(n.getKey())) {
             key = Nodes.size();
@@ -80,7 +87,6 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public void connect(int src, int dest, double w) {
-        // TODO: add check if Edge already exists
         Edge toAdd = new Edge(src, dest, w);
         if (Edges.containsKey(src)) {
             Edges.get(src).put(dest, toAdd);
@@ -217,7 +223,6 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public NodeData removeNode(int key) {
-        // TODO: add function to remove all connected edges
         this.Edges.remove(key);
         this.modCount++;
         return Nodes.remove(key);
