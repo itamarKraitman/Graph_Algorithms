@@ -65,6 +65,7 @@ public interface DirectedWeightedGraph {
 	 * @return the data of the removed node (null if none). 
 	 * @param key
 	 */
+
 	public NodeData removeNode(int key);
 	/**
 	 * Deletes the edge from the graph,
@@ -90,4 +91,6 @@ public interface DirectedWeightedGraph {
  * @return
  */
 	public int getMC();
+
+	public Iterator<EdgeData> reversedEdgeIter(int node_id);
 }

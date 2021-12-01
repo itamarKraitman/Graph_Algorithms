@@ -14,6 +14,7 @@ public class DWGraph implements DirectedWeightedGraph {
 
     public Map<Integer, NodeData> Nodes = new HashMap<>();
     public Map<Integer, HashMap<Integer, EdgeData>> Edges = new HashMap<>();
+    public Map<Integer, HashMap<Integer, EdgeData>> reversedEdges = new HashMap<>();
     private int modCount = 0;
 
     public DWGraph(String filename) {
@@ -34,6 +35,21 @@ public class DWGraph implements DirectedWeightedGraph {
                 } else {
                     tempEdge.put(edge.getDest(), edge);
                     Edges.put(edge.getSrc(), tempEdge);
+                }
+            }
+            // TODO: add tests for reversed edges
+            for (JsonElement graphElement : arrayOfEdges) {
+                JsonObject graphEdge = graphElement.getAsJsonObject();
+                int source = graphEdge.get("dest").getAsInt();
+                double weight = graphEdge.get("w").getAsDouble();
+                int destination = graphEdge.get("src").getAsInt();
+                Edge edge = new Edge(source, destination, weight);
+                HashMap<Integer, EdgeData> tempEdge = new HashMap<>();
+                if (reversedEdges.containsKey(source)) {
+                    reversedEdges.get(source).put(destination, edge);
+                } else {
+                    tempEdge.put(edge.getDest(), edge);
+                    reversedEdges.put(edge.getSrc(), tempEdge);
                 }
             }
             JsonArray arrayOfNodes = fileObject.get("Nodes").getAsJsonArray();
@@ -58,6 +74,7 @@ public class DWGraph implements DirectedWeightedGraph {
     public DWGraph(DWGraph g){
         this.Nodes = g.Nodes;
         this.Edges = g.Edges;
+        this.reversedEdges = g.reversedEdges;
         this.modCount = g.modCount;
     }
 
@@ -220,6 +237,36 @@ public class DWGraph implements DirectedWeightedGraph {
             }
         };
     }
+
+    public Iterator<EdgeData> reversedEdgeIter(int node_id) {
+        if (!Nodes.containsKey(node_id)) {
+            throw new IllegalArgumentException("Node Doesn't Exist In The Graph!!!");
+        }
+        return new Iterator<>() {
+
+            private final Iterator<EdgeData> it = reversedEdges.get(node_id).values().iterator();
+            private int counter = getMC();
+            private EdgeData value = null;
+
+            @Override
+            public boolean hasNext() {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                return it.hasNext();
+            }
+
+            @Override
+            public EdgeData next() {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                value = it.next();
+                return value;
+            }
+        };
+    }
+
 
     @Override
     public NodeData removeNode(int key) {
