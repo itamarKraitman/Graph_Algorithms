@@ -1,25 +1,27 @@
 package main.java;
 
+import com.google.gson.Gson;
 import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
 import main.java.api.EdgeData;
 import main.java.api.NodeData;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
 
     public DWGraph graph;
+    private static final double EPS = 1e-100;
 
-    public DWGraphAlgo(DWGraph g){
-        this.graph = new DWGraph(g);
-
+    public DWGraphAlgo() {
+        this.graph = new DWGraph();
     }
+
     @Override
     public void init(DirectedWeightedGraph g) {
-        this.graph =  new DWGraphAlgo(g);
+        this.graph = (DWGraph) g;
     }
 
     @Override
@@ -29,48 +31,63 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public DirectedWeightedGraph copy() {
-        return null;
+        return new DWGraph(this.graph);
     }
 
     @Override
     public boolean isConnected() {
         boolean[] visited = new boolean[getGraph().nodeSize()];
         int v = 0;
-        DFS(getGraph(),v,visited,true);
-        for(boolean i:visited){
-            if(!i){
+        DFS(this.getGraph(), v, visited, true);
+        for (boolean i : visited) {
+            if (!i) {
                 return false;
             }
         }
-        Arrays.fill(visited,false);
-        DFS(getGraph(),v,visited,false);
-        for(boolean i:visited){
-            if(!i){
+        Arrays.fill(visited, false);
+        DFS(getGraph(), v, visited, false);
+        for (boolean i : visited) {
+            if (!i) {
                 return false;
             }
         }
         return true;
     }
 
-    private void DFS(DirectedWeightedGraph g, int v, boolean[] visited, boolean b){
+    private void DFS(DirectedWeightedGraph g, int v, boolean[] visited, boolean b) {
         visited[v] = true;
         Iterator<EdgeData> it;
-        if(b) {
-            it = this.getGraph().edgeIter(v);
-        } else{
-            it = this.getGraph().reversedEdgeIter(v);
+        if (b) {
+            it = g.edgeIter(v);
+        } else {
+            it = g.reversedEdgeIter(v);
         }
-        while(it.hasNext()){
+        while (it.hasNext()) {
             int u = it.next().getDest();
-            if(!visited[u]){
-                DFS(g,u,visited,b);
+            if (!visited[u]) {
+                DFS(g, u, visited, b);
             }
         }
 
     }
 
+    // Comparator for Dijkstr'a shortest path algorithm
+
     @Override
     public double shortestPathDist(int src, int dest) {
+        int n = this.graph.nodeSize();
+        double[] distance = new double[n];
+        Arrays.fill(distance, Double.POSITIVE_INFINITY);
+        distance[src] = 0;
+        Comparator<Edge> comparator = (o1, o2) -> {
+            if (Math.abs((o1.getWeight() - o2.getWeight())) < EPS) {
+                return 0;
+            } else {
+                return (o1.getWeight() - o2.getWeight() > 0 ? +1 : -1);
+            }
+        };
+        PriorityQueue<Node> pq = new PriorityQueue<>(2*n,comparator);
+        pq.offer(new Edge)
         return 0;
     }
 
@@ -91,7 +108,19 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public boolean save(String file) {
-        return false;
+        try {
+            FileWriter f = new FileWriter(file);
+            Gson gson = new Gson();
+            String toWrite = gson.toJson(this.graph.Nodes);
+            String toWrite2 = gson.toJson(this.graph.Edges);
+            f.write(toWrite);
+            f.write(toWrite2);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("An Error Occured!");
+            return false;
+        }
     }
 
     @Override
@@ -100,7 +129,8 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
             this.graph = new DWGraph(file);
             return true;
         } catch (RuntimeException e) {
-            System.out.println("File Not Found!");
+            e.printStackTrace();
+            System.out.println("An Error Occured!");
             return false;
         }
     }

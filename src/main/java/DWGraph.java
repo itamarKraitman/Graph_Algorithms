@@ -17,6 +17,12 @@ public class DWGraph implements DirectedWeightedGraph {
     public Map<Integer, HashMap<Integer, EdgeData>> reversedEdges = new HashMap<>();
     private int modCount = 0;
 
+    // Empty Constructor
+    public DWGraph(){
+
+    }
+
+    // JSON Constructor
     public DWGraph(String filename) {
         File input = new File(filename);
         try {
@@ -238,6 +244,7 @@ public class DWGraph implements DirectedWeightedGraph {
         };
     }
 
+    @Override
     public Iterator<EdgeData> reversedEdgeIter(int node_id) {
         if (!Nodes.containsKey(node_id)) {
             throw new IllegalArgumentException("Node Doesn't Exist In The Graph!!!");
@@ -270,6 +277,7 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public NodeData removeNode(int key) {
+        // TODO: add Iterator so that all INGOING edges are also deleted
         this.Edges.remove(key);
         this.modCount++;
         return Nodes.remove(key);

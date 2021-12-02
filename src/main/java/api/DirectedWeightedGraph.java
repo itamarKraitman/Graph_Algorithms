@@ -59,6 +59,13 @@ public interface DirectedWeightedGraph {
 	public Iterator<EdgeData> edgeIter(int node_id);
 
 	/**
+	 * This method returns an Iterator for edges getting out of the given node once you reverse the graph's original edges.
+	 * Note: if the graph was changed since the iterator was constructed - a RuntimeException should be thrown.
+	 *  @return Iterator<EdgeData>
+	 */
+	public Iterator<EdgeData> reversedEdgeIter(int node_id);
+
+	/**
 	 * Deletes the node (with the given ID) from the graph -
 	 * and removes all edges which starts or ends at this node.
 	 * This method should run in O(k), V.degree=k, as all the edges should be removed.
@@ -91,6 +98,4 @@ public interface DirectedWeightedGraph {
  * @return
  */
 	public int getMC();
-
-	public Iterator<EdgeData> reversedEdgeIter(int node_id);
 }
