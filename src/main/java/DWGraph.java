@@ -77,6 +77,7 @@ public class DWGraph implements DirectedWeightedGraph {
         }
     }
 
+    // copy constructor
     public DWGraph(DWGraph g){
         this.Nodes = g.Nodes;
         this.Edges = g.Edges;
@@ -142,8 +143,10 @@ public class DWGraph implements DirectedWeightedGraph {
                if (getMC() != counter) {
                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                }
-               value = it.next();
-               return value;
+               if (hasNext()) {
+                   value = it.next();
+                   return value;
+               } else throw new NullPointerException("Iterator Has No Next Value");
            }
 
            @Override
@@ -157,9 +160,9 @@ public class DWGraph implements DirectedWeightedGraph {
                }
            }
        };
-
     }
 
+    // Iterating over all edges in the graph
     @Override
     public Iterator<EdgeData> edgeIter() {
         return new Iterator<>() {
@@ -227,8 +230,10 @@ public class DWGraph implements DirectedWeightedGraph {
                 if (getMC() != counter) {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
-                value = it.next();
-                return value;
+                if (hasNext()) {
+                    value = it.next();
+                    return value;
+                } else throw new NullPointerException("Iterator Has No Next Value");
             }
 
             @Override
@@ -268,8 +273,10 @@ public class DWGraph implements DirectedWeightedGraph {
                 if (getMC() != counter) {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
-                value = it.next();
-                return value;
+                if (hasNext()) {
+                    value = it.next();
+                    return value;
+                } else throw new NullPointerException("Iterator Has No Next Value");
             }
         };
     }
@@ -277,10 +284,19 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public NodeData removeNode(int key) {
-        // TODO: add Iterator so that all INGOING edges are also deleted
+        // TODO: add Iterator so that all INGOING edges are also deleted- done by Itamar
         this.Edges.remove(key);
         this.modCount++;
+        removeIngoingEdges(key); // removing all ingoing edges
         return Nodes.remove(key);
+    }
+
+    private void removeIngoingEdges(int key) {
+        for (int i = 0; i < this.Edges.size(); i++) {
+            HashMap<Integer, EdgeData> currentEdge = this.Edges.get(i);
+            if (currentEdge.containsKey(key)) // if dest is key
+                removeEdge(i, key);
+        }
     }
 
     @Override
