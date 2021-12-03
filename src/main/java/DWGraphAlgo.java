@@ -72,22 +72,28 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     }
 
     // Comparator for Dijkstr'a shortest path algorithm
-
     @Override
     public double shortestPathDist(int src, int dest) {
         int n = this.graph.nodeSize();
         double[] distance = new double[n];
         Arrays.fill(distance, Double.POSITIVE_INFINITY);
         distance[src] = 0;
-        Comparator<Edge> comparator = (o1, o2) -> {
+        Comparator<Node> comparator = (o1, o2) -> {
             if (Math.abs((o1.getWeight() - o2.getWeight())) < EPS) {
                 return 0;
             } else {
                 return (o1.getWeight() - o2.getWeight() > 0 ? +1 : -1);
             }
         };
-        PriorityQueue<Node> pq = new PriorityQueue<>(2*n,comparator);
-        pq.offer(new Edge)
+        PriorityQueue<Node> pq = new PriorityQueue<Node>(2*n,comparator);
+        pq.offer((Node) this.graph.Nodes.get(src));
+        while (!pq.isEmpty()) {
+            Node current = pq.poll();
+            // iterating over all adjacent of current
+            for (int i = 0; i < this.graph.Edges.get(current.getKey()).size(); i++) {
+                
+            }
+        }
         return 0;
     }
 
