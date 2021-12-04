@@ -91,10 +91,14 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
             Node current = pq.poll();
             // iterating over all adjacent of current
             for (int i = 0; i < this.graph.Edges.get(current.getKey()).size(); i++) {
-                
+                Edge edgeToAdj = (Edge) this.graph.Edges.get(current.getKey()).get(i);
+                if (distance[edgeToAdj.getDest()] > distance[current.getKey()] + edgeToAdj.getWeight()) {
+                    distance[edgeToAdj.getDest()] = distance[current.getKey()] + edgeToAdj.getWeight();
+                    pq.add((Node) this.graph.Nodes.get(edgeToAdj.getDest()));
+                }
             }
         }
-        return 0;
+        return distance[dest];
     }
 
     @Override
