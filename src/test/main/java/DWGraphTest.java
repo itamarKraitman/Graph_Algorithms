@@ -1,5 +1,9 @@
 package main.java;
 
+import main.java.GraphClass.DWGraph;
+import main.java.GraphClass.Edge;
+import main.java.GraphClass.Geo_Location;
+import main.java.GraphClass.Node;
 import main.java.api.EdgeData;
 import main.java.api.NodeData;
 import org.junit.jupiter.api.Test;

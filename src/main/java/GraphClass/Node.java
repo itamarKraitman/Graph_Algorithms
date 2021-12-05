@@ -1,4 +1,4 @@
-package main.java;
+package main.java.GraphClass;
 
 import main.java.api.GeoLocation;
 import main.java.api.NodeData;

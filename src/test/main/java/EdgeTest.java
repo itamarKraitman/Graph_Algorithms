@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.GraphClass.Edge;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

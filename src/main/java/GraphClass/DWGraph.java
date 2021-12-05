@@ -1,11 +1,10 @@
-package main.java;
+package main.java.GraphClass;
 
 import com.google.gson.*;
 import main.java.api.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -43,7 +42,6 @@ public class DWGraph implements DirectedWeightedGraph {
                     Edges.put(edge.getSrc(), tempEdge);
                 }
             }
-            // TODO: add tests for reversed edges
             for (JsonElement graphElement : arrayOfEdges) {
                 JsonObject graphEdge = graphElement.getAsJsonObject();
                 int source = graphEdge.get("dest").getAsInt();
@@ -249,7 +247,7 @@ public class DWGraph implements DirectedWeightedGraph {
         };
     }
 
-    @Override
+
     public Iterator<EdgeData> reversedEdgeIter(int node_id) {
         if (!Nodes.containsKey(node_id)) {
             throw new IllegalArgumentException("Node Doesn't Exist In The Graph!!!");
@@ -284,18 +282,20 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public NodeData removeNode(int key) {
-        // TODO: add Iterator so that all INGOING edges are also deleted- done by Itamar
+        removeIngoingEdges(key); // removing all ingoing edges
         this.Edges.remove(key);
         this.modCount++;
-        removeIngoingEdges(key); // removing all ingoing edges
         return Nodes.remove(key);
     }
 
     private void removeIngoingEdges(int key) {
-        for (int i = 0; i < this.Edges.size(); i++) {
-            HashMap<Integer, EdgeData> currentEdge = this.Edges.get(i);
-            if (currentEdge.containsKey(key)) // if dest is key
-                removeEdge(i, key);
+        Iterator<EdgeData> it = this.edgeIter();
+        EdgeData edge;
+        while(it.hasNext()){
+            edge = it.next();
+            if(edge.getDest()==key){
+                removeEdge(edge.getSrc(),edge.getDest());
+            }
         }
     }
 
@@ -324,6 +324,15 @@ public class DWGraph implements DirectedWeightedGraph {
     @Override
     public int getMC() {
         return this.modCount;
+    }
+
+    public void resetTag(){
+        Iterator<NodeData> it = this.nodeIter();
+        NodeData pointer = null;
+        while(it.hasNext()){
+            pointer = it.next();
+            pointer.setTag(0);
+        }
     }
 
 //    public static ArrayList<HashMap<Integer, EdgeData>> getAllEdges(DWGraph graph) {

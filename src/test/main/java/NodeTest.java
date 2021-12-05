@@ -1,5 +1,7 @@
 package main.java;
 
+import main.java.GraphClass.Geo_Location;
+import main.java.GraphClass.Node;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
