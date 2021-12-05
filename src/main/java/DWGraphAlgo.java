@@ -5,6 +5,7 @@ import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
 import main.java.api.EdgeData;
 import main.java.api.NodeData;
+import org.w3c.dom.traversal.NodeIterator;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -74,8 +75,14 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     // Comparator for Dijkstr'a shortest path algorithm
     @Override
     public double shortestPathDist(int src, int dest) {
-        int n = this.graph.nodeSize();
-        double[] distance = new double[n];
+        double[] distance = new double[this.graph.nodeSize()];
+        int[] parents = new int[this.graph.nodeSize()];
+        Arrays.fill(parents, -1);
+        DijkstraAlgo(parents ,distance, src, dest);
+        return distance[dest];
+    }
+
+    private void DijkstraAlgo(int[] parents ,double[] distance ,int src, int dest) {
         Arrays.fill(distance, Double.POSITIVE_INFINITY);
         distance[src] = 0;
         Comparator<Node> comparator = (o1, o2) -> {
@@ -85,26 +92,47 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
                 return (o1.getWeight() - o2.getWeight() > 0 ? +1 : -1);
             }
         };
-        PriorityQueue<Node> pq = new PriorityQueue<Node>(2*n,comparator);
+        PriorityQueue<Node> pq = new PriorityQueue<Node>(2*distance.length,comparator);
         pq.offer((Node) this.graph.Nodes.get(src));
         while (!pq.isEmpty()) {
             Node current = pq.poll();
+            ArrayList<Integer> destOfOutgoingEdge = new ArrayList<>(this.graph.Edges.get(current.getKey()).keySet());
             // iterating over all adjacent of current
-            for (int i = 0; i < this.graph.Edges.get(current.getKey()).size(); i++) {
-                Edge edgeToAdj = (Edge) this.graph.Edges.get(current.getKey()).get(i);
+            for (int i = 0; i < destOfOutgoingEdge.size(); i++) { // for all edges which
+                Edge edgeToAdj = (Edge) this.graph.Edges.get(current.getKey()).get(destOfOutgoingEdge.get(i));
                 if (distance[edgeToAdj.getDest()] > distance[current.getKey()] + edgeToAdj.getWeight()) {
                     distance[edgeToAdj.getDest()] = distance[current.getKey()] + edgeToAdj.getWeight();
                     pq.add((Node) this.graph.Nodes.get(edgeToAdj.getDest()));
+                    parents[edgeToAdj.getDest()] = current.getKey();
                 }
             }
         }
-        return distance[dest];
     }
 
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
-        return null;
+        double[] distance = new double[this.graph.nodeSize()];
+        int[] parents = new int[this.graph.nodeSize()];
+        Arrays.fill(parents, -1);
+        DijkstraAlgo(parents ,distance, src, dest);
+        return path(parents, distance, dest, src);
     }
+
+    private List<NodeData> path(int[] parents, double[] distance, int dest, int src) {
+        List<NodeData> nodesPath = new ArrayList<>();
+        nodesPath.add(this.graph.Nodes.get(dest));
+        int i = parents[dest];
+        while (i != src) {
+            NodeData current = this.graph.Nodes.get(i);
+            nodesPath.add(current);
+            i = parents[current.getKey()];
+        }
+        // i equals to src
+        nodesPath.add(this.graph.Nodes.get(src));
+        Collections.reverse(nodesPath);
+        return nodesPath;
+    }
+
 
     @Override
     public NodeData center() {
