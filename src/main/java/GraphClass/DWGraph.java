@@ -255,8 +255,7 @@ public class DWGraph implements DirectedWeightedGraph {
         return new Iterator<>() {
 
             private final Iterator<EdgeData> it = reversedEdges.get(node_id).values().iterator();
-            private int counter = getMC();
-            private EdgeData value = null;
+            private final int counter = getMC();
 
             @Override
             public boolean hasNext() {
@@ -272,8 +271,7 @@ public class DWGraph implements DirectedWeightedGraph {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
                 if (hasNext()) {
-                    value = it.next();
-                    return value;
+                    return it.next();
                 } else throw new NullPointerException("Iterator Has No Next Value");
             }
         };
@@ -328,28 +326,10 @@ public class DWGraph implements DirectedWeightedGraph {
 
     public void resetTag(){
         Iterator<NodeData> it = this.nodeIter();
-        NodeData pointer = null;
+        NodeData pointer;
         while(it.hasNext()){
             pointer = it.next();
             pointer.setTag(0);
         }
     }
-
-//    public static ArrayList<HashMap<Integer, EdgeData>> getAllEdges(DWGraph graph) {
-//        ArrayList<HashMap<Integer, EdgeData>> allEdges = new ArrayList<>();
-//        for (int i = 0; i < graph.Edges.size(); i++) {
-//            allEdges.add(graph.Edges.get(i));
-//        }
-//        return allEdges;
-//    }
-//
-//    public ArrayList<HashMap<Integer, EdgeData>> getEdgesFrom(int nodeId) {
-//        ArrayList<HashMap<Integer, EdgeData>> ans = new ArrayList<>();
-//        for (int i = 0; i < this.Edges.size(); i++) {
-//            HashMap<Integer, EdgeData> current = this.Edges.get(i);
-//            if (current.containsKey(nodeId))
-//                ans.add(current);
-//        }
-//        return ans;
-//    }
 }
