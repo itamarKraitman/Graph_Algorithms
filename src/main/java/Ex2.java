@@ -5,9 +5,6 @@ import com.google.gson.Gson;
 
 /**
  * This class is the main class for Ex2 - your implementation will be tested using this class.
- * TODO: implement the data structure - hashMap: key- vertex id, values- hash map: key- destination, values- weight.
- * TODO: implement all classes according to data structure attitude.
- * TODO: Test Cases for classes
  */
 public class Ex2 {
     /**

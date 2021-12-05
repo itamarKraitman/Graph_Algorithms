@@ -184,12 +184,4 @@ class DWGraphTest {
         assertEquals(4, testGraph.getMC());
     }
 
-    // TODO: add these testers
-    @Test
-    void getAllEdges() {
-    }
-
-    @Test
-    void getEdgesFrom() {
-    }
 }

@@ -326,21 +326,21 @@ public class DWGraph implements DirectedWeightedGraph {
         return this.modCount;
     }
 
-    public static ArrayList<HashMap<Integer, EdgeData>> getAllEdges(DWGraph graph) {
-        ArrayList<HashMap<Integer, EdgeData>> allEdges = new ArrayList<>();
-        for (int i = 0; i < graph.Edges.size(); i++) {
-            allEdges.add(graph.Edges.get(i));
-        }
-        return allEdges;
-    }
-
-    public ArrayList<HashMap<Integer, EdgeData>> getEdgesFrom(int nodeId) {
-        ArrayList<HashMap<Integer, EdgeData>> ans = new ArrayList<>();
-        for (int i = 0; i < this.Edges.size(); i++) {
-            HashMap<Integer, EdgeData> current = this.Edges.get(i);
-            if (current.containsKey(nodeId))
-                ans.add(current);
-        }
-        return ans;
-    }
+//    public static ArrayList<HashMap<Integer, EdgeData>> getAllEdges(DWGraph graph) {
+//        ArrayList<HashMap<Integer, EdgeData>> allEdges = new ArrayList<>();
+//        for (int i = 0; i < graph.Edges.size(); i++) {
+//            allEdges.add(graph.Edges.get(i));
+//        }
+//        return allEdges;
+//    }
+//
+//    public ArrayList<HashMap<Integer, EdgeData>> getEdgesFrom(int nodeId) {
+//        ArrayList<HashMap<Integer, EdgeData>> ans = new ArrayList<>();
+//        for (int i = 0; i < this.Edges.size(); i++) {
+//            HashMap<Integer, EdgeData> current = this.Edges.get(i);
+//            if (current.containsKey(nodeId))
+//                ans.add(current);
+//        }
+//        return ans;
+//    }
 }
