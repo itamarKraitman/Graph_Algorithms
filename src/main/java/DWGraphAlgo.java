@@ -5,7 +5,6 @@ import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
 import main.java.api.EdgeData;
 import main.java.api.NodeData;
-import org.w3c.dom.traversal.NodeIterator;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,6 +35,7 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     }
 
     @Override
+    // TODO: switch to BFS to avoid stack overflow on larger graphs
     public boolean isConnected() {
         boolean[] visited = new boolean[getGraph().nodeSize()];
         int v = 0;
@@ -72,34 +72,45 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
 
     }
 
-    // Comparator for Dijkstr'a shortest path algorithm
     @Override
     public double shortestPathDist(int src, int dest) {
+        if (src == dest) {
+            return 0;
+        }
         double[] distance = new double[this.graph.nodeSize()];
         int[] parents = new int[this.graph.nodeSize()];
         Arrays.fill(parents, -1);
-        DijkstraAlgo(parents ,distance, src, dest);
+        DijkstraAlgo(parents, distance, src);
         return distance[dest];
     }
 
-    private void DijkstraAlgo(int[] parents ,double[] distance ,int src, int dest) {
+    public double[] shortestPathArray(int src) {
+        double[] distance = new double[this.graph.nodeSize()];
+        int[] parents = new int[this.graph.nodeSize()];
+        Arrays.fill(parents, -1);
+        DijkstraAlgo(parents, distance, src);
+        return distance;
+    }
+
+    // TODO: fix the comparator here
+    private void DijkstraAlgo(int[] parents, double[] distance, int src) {
         Arrays.fill(distance, Double.POSITIVE_INFINITY);
         distance[src] = 0;
-        Comparator<Node> comparator = (o1, o2) -> {
+        Comparator<NodeData> comparator = (o1, o2) -> {
             if (Math.abs((o1.getWeight() - o2.getWeight())) < EPS) {
                 return 0;
             } else {
                 return (o1.getWeight() - o2.getWeight() > 0 ? +1 : -1);
             }
         };
-        PriorityQueue<Node> pq = new PriorityQueue<Node>(2*distance.length,comparator);
-        pq.offer((Node) this.graph.Nodes.get(src));
+        PriorityQueue<NodeData> pq = new PriorityQueue<>(distance.length, comparator);
+        pq.offer(this.graph.Nodes.get(src));
         while (!pq.isEmpty()) {
-            Node current = pq.poll();
+            NodeData current = pq.poll();
             ArrayList<Integer> destOfOutgoingEdge = new ArrayList<>(this.graph.Edges.get(current.getKey()).keySet());
             // iterating over all adjacent of current
-            for (int i = 0; i < destOfOutgoingEdge.size(); i++) { // for all edges which
-                Edge edgeToAdj = (Edge) this.graph.Edges.get(current.getKey()).get(destOfOutgoingEdge.get(i));
+            for (Integer integer : destOfOutgoingEdge) { // for all edges which
+                EdgeData edgeToAdj = this.graph.Edges.get(current.getKey()).get(integer);
                 if (distance[edgeToAdj.getDest()] > distance[current.getKey()] + edgeToAdj.getWeight()) {
                     distance[edgeToAdj.getDest()] = distance[current.getKey()] + edgeToAdj.getWeight();
                     pq.add((Node) this.graph.Nodes.get(edgeToAdj.getDest()));
@@ -111,14 +122,19 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
+        if (src == dest) {
+            List<NodeData> list = new ArrayList<>();
+            list.add(this.graph.Nodes.get(src));
+            return list;
+        }
         double[] distance = new double[this.graph.nodeSize()];
         int[] parents = new int[this.graph.nodeSize()];
         Arrays.fill(parents, -1);
-        DijkstraAlgo(parents ,distance, src, dest);
-        return path(parents, distance, dest, src);
+        DijkstraAlgo(parents, distance, src);
+        return path(parents, dest, src);
     }
 
-    private List<NodeData> path(int[] parents, double[] distance, int dest, int src) {
+    private List<NodeData> path(int[] parents, int dest, int src) {
         List<NodeData> nodesPath = new ArrayList<>();
         nodesPath.add(this.graph.Nodes.get(dest));
         int i = parents[dest];
@@ -136,7 +152,27 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public NodeData center() {
-        return null;
+        int n = this.graph.nodeSize();
+        double[] arr;
+        double[] allDist = new double[n];
+        for (int i = 0; i < n; i++) {
+            arr = shortestPathArray(i);
+            for (int j = 0; j < n; j++) {
+                double dist = arr[j];
+                if (dist > allDist[i]) {
+                    allDist[i] = dist;
+                }
+            }
+        }
+        double min = allDist[0];
+        int index = 0;
+        for (int i = 0; i < allDist.length; i++) {
+            if (min > allDist[i]) {
+                min = allDist[i];
+                index = i;
+            }
+        }
+        return this.graph.getNode(index);
     }
 
     @Override
