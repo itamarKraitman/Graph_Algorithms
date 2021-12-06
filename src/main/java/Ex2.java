@@ -1,6 +1,9 @@
 package main.java;
+import main.java.Algorithms.DWGraphAlgo;
 import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
+import main.java.GraphClass.DWGraph;
+import javax.swing.*;
 import com.google.gson.Gson;
 
 /**
@@ -13,11 +16,7 @@ public class Ex2 {
      * @return
      */
     public static DirectedWeightedGraph getGrapg(String json_file) {
-        DirectedWeightedGraph ans = null;
-        // ****** Add your code here ******
-        //
-        // ********************************
-        return ans;
+        return new DWGraph(json_file);
     }
     /**
      * This static function will be used to test your implementation
@@ -25,10 +24,8 @@ public class Ex2 {
      * @return
      */
     public static DirectedWeightedGraphAlgorithms getGrapgAlgo(String json_file) {
-        DirectedWeightedGraphAlgorithms ans = null;
-        // ****** Add your code here ******
-        //
-        // ********************************
+        DirectedWeightedGraphAlgorithms ans = new DWGraphAlgo();
+        ans.init(getGrapg(json_file));
         return ans;
     }
     /**

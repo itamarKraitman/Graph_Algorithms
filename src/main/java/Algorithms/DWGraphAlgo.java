@@ -136,13 +136,85 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     }
 
     // Nearest Neighbour modified to use Dijkstra if no suitable neighbours are found
+    // TODO: finish implementing this
     @Override
     public List<NodeData> tsp(List<NodeData> cities) {
+        if (cities == null || cities.size() == 0){
+            return null;
+        }
+        List<NodeData> cityTraversal = new ArrayList<>();
+        List<NodeData> needToVisit = new LinkedList<>();
+        NodeData tempNode;
+        HashMap<Integer, Boolean> visited = new HashMap<>();
+        for (NodeData city : cities) {
+            visited.put(city.getKey(), false);
+            needToVisit.add(city);
+        }
+        int tempDest;
+        double travelWeight = 0;
+        cityTraversal.add(needToVisit.get(0));
+        // In case the travelWeight is infinity that means no viable path is available and we exit the algorithm and return
+        // Credit for this conditional statement goes to Amir Sabag.
+        while (!needToVisit.isEmpty() && travelWeight < Double.MAX_VALUE) {
+            tempNode = cityTraversal.get(cityTraversal.size()-1);
+            needToVisit.remove(tempNode);
+            visited.replace(tempNode.getKey(), true);
+            tempDest = minDirectedPath(tempNode.getKey(), visited, needToVisit);
+            if (tempDest == -1){
+                Dijkstra d = new Dijkstra(this.graph, tempNode);
+                d.DijkstraAlgo(tempNode.getKey()); // dijkstra algo
+                List<NodeData> undirectedPath = minUndirectedPath(d, tempNode, visited, needToVisit);
+                if (undirectedPath != null) {
+                    travelWeight += d.getDistBetSrcToDest(undirectedPath.get(undirectedPath.size() - 1).getKey());
+                    undirectedPath.remove(0);
+                    cityTraversal.addAll(undirectedPath);
+                    needToVisit.removeAll(undirectedPath);
+                }
+            }
+            else {
+                cityTraversal.add(this.graph.getNode(tempDest));
+                needToVisit.remove(this.graph.getNode(tempDest));
+                travelWeight += this.graph.getEdge(tempNode.getKey(), tempDest).getWeight();
+            }
+        }
+        return cityTraversal;
+    }
 
-        return null;
+    private int minDirectedPath(int src, HashMap<Integer, Boolean> visited, List<NodeData> needToVisit) {
+        double minPath = Double.MAX_VALUE;
+        int minDest = -1;
+        for (NodeData city : needToVisit){
+            if (!visited.get(city.getKey())){
+                if (this.graph.getEdge(src, city.getKey()) != null){
+                    if (this.graph.getEdge(src, city.getKey()).getWeight() < minPath){
+                        minPath = this.graph.getEdge(src, city.getKey()).getWeight();
+                        minDest = city.getKey();
+                    }
+                }
+            }
+        }
+        return minDest;
+    }
+
+    private List<NodeData> minUndirectedPath(Dijkstra d, NodeData src, HashMap<Integer, Boolean> visited, List<NodeData> needToVisit) {
+        double tempDist = Double.MAX_VALUE;
+        int tempKey = -1;
+        for (NodeData node : needToVisit){
+            if (d.getDistBetSrcToDest(node.getKey()) < tempDist && !visited.get(node.getKey())){
+                tempDist = d.getDistBetSrcToDest(node.getKey());
+                tempKey = node.getKey();
+            }
+        }
+        if (tempKey == -1){
+            return null;
+        }
+        else {
+            return d.shortestPathNodes(this.graph.getNode(tempKey).getKey());
+        }
     }
 
     @Override
+    // TODO: implement this fully & test it
     public boolean save(String file) {
         try {
             FileWriter f = new FileWriter(file);
