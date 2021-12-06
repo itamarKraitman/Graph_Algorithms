@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class DWGraph implements DirectedWeightedGraph {
 
@@ -76,6 +77,7 @@ public class DWGraph implements DirectedWeightedGraph {
     }
 
     // copy constructor
+    // TODO: Test if this function really does a "deep" copy of the graph
     public DWGraph(DWGraph g){
         this.Nodes = g.Nodes;
         this.Edges = g.Edges;
@@ -157,6 +159,16 @@ public class DWGraph implements DirectedWeightedGraph {
                    this.counter = getMC();
                }
            }
+
+           @Override
+           public void forEachRemaining(Consumer<? super NodeData> action) {
+               if (getMC() != counter) {
+                   throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+               }
+               while(it.hasNext()){
+                   action.accept(next());
+               }
+           }
        };
     }
 
@@ -175,7 +187,7 @@ public class DWGraph implements DirectedWeightedGraph {
                 if (getMC() != counter) {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
-                return it.hasNext() && (edgeIt == null || edgeIt.hasNext());
+                return it.hasNext() || (edgeIt == null || edgeIt.hasNext());
             }
 
             @Override
@@ -198,6 +210,15 @@ public class DWGraph implements DirectedWeightedGraph {
                 if (value != null) {
                     removeEdge(value.getSrc(), value.getDest());
                     this.counter = getMC();
+                }
+            }
+            @Override
+            public void forEachRemaining(Consumer<? super EdgeData> action) {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                while(it.hasNext()){
+                    action.accept(next());
                 }
             }
         };
@@ -242,6 +263,15 @@ public class DWGraph implements DirectedWeightedGraph {
                 if (value != null) {
                     removeEdge(value.getSrc(), value.getDest());
                     this.counter = getMC();
+                }
+            }
+            @Override
+            public void forEachRemaining(Consumer<? super EdgeData> action) {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                while(it.hasNext()){
+                    action.accept(next());
                 }
             }
         };
