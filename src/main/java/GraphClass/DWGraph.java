@@ -354,6 +354,7 @@ public class DWGraph implements DirectedWeightedGraph {
         return this.modCount;
     }
 
+    // TODO: add this test
     public void resetTag(){
         Iterator<NodeData> it = this.nodeIter();
         NodeData pointer;

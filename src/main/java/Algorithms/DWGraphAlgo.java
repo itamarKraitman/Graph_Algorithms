@@ -1,6 +1,7 @@
 package main.java.Algorithms;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import main.java.GraphClass.DWGraph;
 import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
@@ -42,9 +43,9 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         Iterator<NodeData> it = this.getGraph().nodeIter();
         NodeData pointer;
         DFS(this.getGraph(), v, true);
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             pointer = it.next();
-            if (pointer.getTag()==0) {
+            if (pointer.getTag() == 0) {
                 return false;
             }
         }
@@ -52,9 +53,9 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         Iterator<NodeData> itReversed = this.getGraph().nodeIter();
         NodeData pointerReversed;
         DFS(this.getGraph(), v, false);
-        while(itReversed.hasNext()) {
+        while (itReversed.hasNext()) {
             pointerReversed = itReversed.next();
-            if (pointerReversed.getTag()==0) {
+            if (pointerReversed.getTag() == 0) {
                 return false;
             }
         }
@@ -67,10 +68,10 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         Iterator<EdgeData> it;
         DWGraph gg = (DWGraph) g; // This is only to use the reversed Edge iterator
         stack.push(g.getNode(v));
-        while (stack.size()!=0) {
+        while (stack.size() != 0) {
             v = stack.peek().getKey();
             stack.pop();
-            if (this.graph.getNode(v).getTag()==1) {
+            if (this.graph.getNode(v).getTag() == 1) {
                 continue;
             }
             this.graph.getNode(v).setTag(1);
@@ -79,15 +80,14 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
             } else {
                 it = gg.reversedEdgeIter(v);
             }
-                while (it.hasNext()) {
-                    u = it.next();
-                    if (this.graph.getNode(u.getDest()).getTag() == 0) {
-                        stack.push(g.getNode(u.getDest()));
-                    }
+            while (it.hasNext()) {
+                u = it.next();
+                if (this.graph.getNode(u.getDest()).getTag() == 0) {
+                    stack.push(g.getNode(u.getDest()));
                 }
             }
         }
-
+    }
 
 
     @Override
@@ -118,16 +118,16 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         List<Dijkstra> ld = new ArrayList<>();
         Iterator<NodeData> itN = this.graph.nodeIter();
         NodeData current = null;
-        while (itN.hasNext()){
+        while (itN.hasNext()) {
             current = itN.next();
             Dijkstra d = new Dijkstra(this.graph, current);
             d.DijkstraAlgo(current.getKey());
             ld.add(d);
         }
         double shortest = Double.MAX_VALUE, temp;
-        for (Dijkstra dd : ld){
+        for (Dijkstra dd : ld) {
             temp = dd.maxLongestDist();
-            if (shortest > temp){
+            if (shortest > temp) {
                 shortest = temp;
                 current = dd.src;
             }
@@ -139,7 +139,7 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     // TODO: finish implementing this
     @Override
     public List<NodeData> tsp(List<NodeData> cities) {
-        if (cities == null || cities.size() == 0){
+        if (cities == null || cities.size() == 0) {
             return null;
         }
         List<NodeData> cityTraversal = new ArrayList<>();
@@ -156,11 +156,11 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         // In case the travelWeight is infinity that means no viable path is available and we exit the algorithm and return
         // Credit for this conditional statement goes to Amir Sabag.
         while (!needToVisit.isEmpty() && travelWeight < Double.MAX_VALUE) {
-            tempNode = cityTraversal.get(cityTraversal.size()-1);
+            tempNode = cityTraversal.get(cityTraversal.size() - 1);
             needToVisit.remove(tempNode);
             visited.replace(tempNode.getKey(), true);
             tempDest = minDirectedPath(tempNode.getKey(), visited, needToVisit);
-            if (tempDest == -1){
+            if (tempDest == -1) {
                 Dijkstra d = new Dijkstra(this.graph, tempNode);
                 d.DijkstraAlgo(tempNode.getKey()); // dijkstra algo
                 List<NodeData> undirectedPath = minUndirectedPath(d, tempNode, visited, needToVisit);
@@ -170,8 +170,7 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
                     cityTraversal.addAll(undirectedPath);
                     needToVisit.removeAll(undirectedPath);
                 }
-            }
-            else {
+            } else {
                 cityTraversal.add(this.graph.getNode(tempDest));
                 needToVisit.remove(this.graph.getNode(tempDest));
                 travelWeight += this.graph.getEdge(tempNode.getKey(), tempDest).getWeight();
@@ -183,10 +182,10 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     private int minDirectedPath(int src, HashMap<Integer, Boolean> visited, List<NodeData> needToVisit) {
         double minPath = Double.MAX_VALUE;
         int minDest = -1;
-        for (NodeData city : needToVisit){
-            if (!visited.get(city.getKey())){
-                if (this.graph.getEdge(src, city.getKey()) != null){
-                    if (this.graph.getEdge(src, city.getKey()).getWeight() < minPath){
+        for (NodeData city : needToVisit) {
+            if (!visited.get(city.getKey())) {
+                if (this.graph.getEdge(src, city.getKey()) != null) {
+                    if (this.graph.getEdge(src, city.getKey()).getWeight() < minPath) {
                         minPath = this.graph.getEdge(src, city.getKey()).getWeight();
                         minDest = city.getKey();
                     }
@@ -199,16 +198,15 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     private List<NodeData> minUndirectedPath(Dijkstra d, NodeData src, HashMap<Integer, Boolean> visited, List<NodeData> needToVisit) {
         double tempDist = Double.MAX_VALUE;
         int tempKey = -1;
-        for (NodeData node : needToVisit){
-            if (d.getDistBetSrcToDest(node.getKey()) < tempDist && !visited.get(node.getKey())){
+        for (NodeData node : needToVisit) {
+            if (d.getDistBetSrcToDest(node.getKey()) < tempDist && !visited.get(node.getKey())) {
                 tempDist = d.getDistBetSrcToDest(node.getKey());
                 tempKey = node.getKey();
             }
         }
-        if (tempKey == -1){
+        if (tempKey == -1) {
             return null;
-        }
-        else {
+        } else {
             return d.shortestPathNodes(this.graph.getNode(tempKey).getKey());
         }
     }
@@ -217,12 +215,13 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     // TODO: implement this fully & test it
     public boolean save(String file) {
         try {
-            FileWriter f = new FileWriter(file);
-            Gson gson = new Gson();
+            FileWriter f = new FileWriter("" + file);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String toWrite = gson.toJson(this.graph.Nodes);
             String toWrite2 = gson.toJson(this.graph.Edges);
             f.write(toWrite);
             f.write(toWrite2);
+            f.close();
             return true;
         } catch (IOException e) {
             e.printStackTrace();

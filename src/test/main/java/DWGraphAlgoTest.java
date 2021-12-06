@@ -54,18 +54,21 @@ class DWGraphAlgoTest {
     }
 
     @Test
+    // TODO: finish this test
     void getGraph() {
         testInit();
 
     }
 
     @Test
+    // TODO: finish this test
     void copy() {
         testInit();
 
     }
 
     @Test
+    // TODO: finish this test
     void isConnected() {
         testInit();
         assertTrue(test1Graph.isConnected());
@@ -120,20 +123,22 @@ class DWGraphAlgoTest {
     @Test
     void center() {
         testInit();
-    //   Assertions.assertEquals(8, test1Graph.center().getKey());
-     //  Assertions.assertEquals(0, test2Graph.center().getKey());
-      // Assertions.assertEquals(40, test3Graph.center().getKey());
+          Assertions.assertEquals(8, test1Graph.center().getKey());
+       Assertions.assertEquals(0, test2Graph.center().getKey());
+      Assertions.assertEquals(40, test3Graph.center().getKey());
        Assertions.assertEquals(362, test4Graph.center().getKey());
-     //  Assertions.assertEquals(362, test5Graph.center().getKey());
+      Assertions.assertEquals(362, test5Graph.center().getKey());
     }
 
     @Test
+    // TODO: finish this test
     void tsp() {
         testInit();
 
     }
 
     @Test
+    // TODO: finish this test
     void save() {
         testInit();
 

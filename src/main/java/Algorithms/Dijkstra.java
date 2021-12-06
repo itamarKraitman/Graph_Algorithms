@@ -7,6 +7,7 @@ import main.java.api.NodeData;
 
 import java.util.*;
 
+// No need to write tests for this class, its entire functionality is tested within DWGraphTest
 public class Dijkstra {
     NodeData src;
     DirectedWeightedGraph currentGraph;
@@ -87,34 +88,4 @@ public class Dijkstra {
             return list;
         }
     }
-
-//    @Override
-//    public List<NodeData> shortestPath(int src, int dest) {
-//        if (src == dest) {
-//            List<NodeData> list = new ArrayList<>();
-//            list.add(this.graph.Nodes.get(src));
-//            return list;
-//        }
-//        double[] distance = new double[this.graph.nodeSize()];
-//        int[] parents = new int[this.graph.nodeSize()];
-//        Arrays.fill(parents, -1);
-//        DijkstraAlgo(parents, distance, src);
-//        return path(parents, dest, src);
-//    }
-//
-//    private List<NodeData> path(int[] parents, int dest, int src) {
-//        List<NodeData> nodesPath = new ArrayList<>();
-//        nodesPath.add(this.graph.Nodes.get(dest));
-//        int i = parents[dest];
-//        while (i != src) {
-//            NodeData current = this.graph.Nodes.get(i);
-//            nodesPath.add(current);
-//            i = parents[current.getKey()];
-//        }
-//        // i equals to src
-//        nodesPath.add(this.graph.Nodes.get(src));
-//        Collections.reverse(nodesPath);
-//        return nodesPath;
-//    }
-
 }
