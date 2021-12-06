@@ -317,12 +317,12 @@ public class DWGraph implements DirectedWeightedGraph {
     }
 
     private void removeIngoingEdges(int key) {
-        Iterator<EdgeData> it = this.edgeIter();
+        Iterator<EdgeData> it = this.reversedEdgeIter(key);
         EdgeData edge;
         while(it.hasNext()){
             edge = it.next();
             if(edge.getDest()==key){
-                removeEdge(edge.getSrc(),edge.getDest());
+                it.remove();
             }
         }
     }
