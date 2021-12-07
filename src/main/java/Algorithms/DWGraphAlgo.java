@@ -10,6 +10,9 @@ import main.java.api.NodeData;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
@@ -216,13 +219,19 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     // TODO: implement this fully & test it
     public boolean save(String file) {
         try {
-            FileWriter f = new FileWriter("" + file);
+//            FileWriter f = new FileWriter("" + file);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String toWrite = gson.toJson(this.graph.Nodes);
-            String toWrite2 = gson.toJson(this.graph.Edges);
-            f.write(toWrite);
-            f.write(toWrite2);
-            f.close();
+//            String toWrite = gson.toJson("Nodes: " + this.graph.Nodes);
+//            String toWrite2 = gson.toJson("Edges: " + this.graph.Edges);
+////            String fullFile = "Edges: [\n" + toWrite2 + "],\"" + "Nodes: [" + toWrite + "]";
+//            f.write(toWrite2);
+//            f.write(toWrite);
+////            f.write("]");
+//            f.close();
+            Writer writer = Files.newBufferedWriter(Paths.get("g1,json"));
+            gson.toJson(this.graph.Edges, writer);
+            gson.toJson(this.graph.Nodes, writer);
+            writer.close();
             return true;
         } catch (IOException e) {
             e.printStackTrace();

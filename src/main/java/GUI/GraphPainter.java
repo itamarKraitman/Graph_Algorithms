@@ -6,6 +6,9 @@ import java.awt.event.*;
 
 public class GraphPainter extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
+    private GUI frame;
+
+
     @Override
     public void mouseClicked(MouseEvent e) {
 

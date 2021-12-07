@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DWGraphAlgoTest {
@@ -164,7 +165,10 @@ class DWGraphAlgoTest {
     // TODO: finish this test
     void save() {
         testInit();
-
+        String outputFile = "g1.json";
+        assertTrue(test1Graph.save(outputFile));
+//        assertFalse(test1Graph.save("g1.txt"));
+        
     }
 
     @ParameterizedTest
