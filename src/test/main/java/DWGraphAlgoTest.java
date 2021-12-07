@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DWGraphAlgoTest {
 
-    String path1 = "C:\\Users\\yuval\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G1.json";
-    String path2 = "C:\\Users\\yuval\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G2.json";
-    String path3 = "C:\\Users\\yuval\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G3.json";
-    String path4 = "C:\\Users\\yuval\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\1K_Nodes.json";
-    String path5 = "C:\\Users\\yuval\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\10K_Nodes.json";
+    String path1 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G1.json";
+    String path2 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G2.json";
+    String path3 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G3.json";
+    String path4 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\1K_Nodes.json";
+    String path5 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\10K_Nodes.json";
 
     DirectedWeightedGraph g1 = new DWGraph(path1);
     DirectedWeightedGraph g2 = new DWGraph(path2);
@@ -134,7 +134,30 @@ class DWGraphAlgoTest {
     // TODO: finish this test
     void tsp() {
         testInit();
-
+        List<NodeData> cities = new ArrayList<>();
+        cities.add(g1.getNode(0));
+        cities.add(g1.getNode(2));
+        cities.add(g1.getNode(4));
+        cities.add(g1.getNode(6));
+        List<NodeData> shouldBe = new ArrayList<>();
+        int[] tspNodes = {0,1,2,6,5,4};
+        for (int i = 0; i < tspNodes.length; i++)
+            shouldBe.add(g1.getNode(tspNodes[i]));
+        Assertions.assertEquals(shouldBe, test1Graph.tsp(cities));
+        cities.clear();
+        shouldBe.clear();
+        int[] citiesKeys = {2,8,11};
+        for (int city : citiesKeys) cities.add(g2.getNode(city));
+        tspNodes = new int[]{2, 1,26,8,9,10,11};
+        for (int pathNode : tspNodes) shouldBe.add(g2.getNode(pathNode));
+        Assertions.assertEquals(shouldBe, test2Graph.tsp(cities));
+        cities.clear();
+        shouldBe.clear();
+        citiesKeys = new int[]{4,9,12,28};
+        tspNodes = new int[]{4,3,12,11,9,11,13,14,28};
+        for (int city : citiesKeys) cities.add(g3.getNode(city));
+        for (int pathNode : tspNodes) shouldBe.add(g3.getNode(pathNode));
+        Assertions.assertEquals(shouldBe, test3Graph.tsp(cities));
     }
 
     @Test

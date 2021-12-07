@@ -179,6 +179,7 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         return cityTraversal;
     }
 
+    // if one of the neighbours
     private int minDirectedPath(int src, HashMap<Integer, Boolean> visited, List<NodeData> needToVisit) {
         double minPath = Double.MAX_VALUE;
         int minDest = -1;
