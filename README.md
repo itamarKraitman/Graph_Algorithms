@@ -38,7 +38,7 @@ This graph uses an underlying graph object to create a new object which can supp
 A given graph G=(V,E) is connected iff there exists a path from each vertex to every other vertex (in other words, it only has 1 connected component). <br>We check this by running DFS from a random vertex,making sure we visit every other vertex on the graph, then we transpose the graph's edges and run DFS from the same vertex again, if we visited all other nodes - graph is connected! further than that, since it is a directed graph, it is strongly connected.<br>
 Since we go through every node and every edge twice, the complexity is O(|V| + |E|)
 
-####Shortest Path + Shortest Distance using Dijkstra's O(|E|log|V|)
+#### Shortest Path + Shortest Distance using Dijkstra's O(|E|log|V|)
 We use Dijkstra's shortest path algorithm for several purposes, first we use it to calculate the shortest distance between a vertex to all other vertices in the graph (we use this to find the center of a graph - explained later on), we also use it to determine the shortest path between two vertices and reconstruct that path - since this algorithm is so widely used in the exercise, it sits within it's own class and is an object which we create and use as needed.<br>The algorithm is implemented using a Priorty Queue and a comparator which trim the running time from the naive O(|E|+|V|) to a more comfortable O(|E|log|V|), we decided to use a Priorty Queue instead of a Fibonacci Heap because the implementation was more straight-forward.
 <br> [Dijkstra's Algorithm - Wiki page][Dwiki]
 #### Graph Center O(|V|\*|E|log(|V|))
@@ -79,3 +79,5 @@ java -jar Ex2.jar YOUR_GRAPH.json
 
 where the JSON file should be formatted the same as the example files in the data folder - executing this command will boot up the GUI and load in the graph from the JSON file.
 <br>Once the GUI is up & running you can use it to save/load another graph file and run all the aforementioned algorithms on said graph.
+
+[Dwiki]: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
