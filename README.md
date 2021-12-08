@@ -54,7 +54,7 @@ Our approach to solving this problem is using Nearest Neighbour algorithm, which
 Where N is the number of cities, the worst case analysis has us performing N Dijkstra iterations, thus the total worst-case analysis is O(N*|E|log(|V|)).
 
 ###Algorithm Run Times
-
+<div align = "center">
 |**Vertices** |**Edges**|     **Graph Connectivity**     |     **Center**     |
 |-------------|-------------|-------------------------|-------------------------- 
 |   10          |    90         |          24ms               |       51ms              |                  
@@ -62,8 +62,9 @@ Where N is the number of cities, the worst case analysis has us performing N Dij
 |    1000         |     10000        |         111ms                |    3sec & 201ms            |                      
 |    10000        |    100000       |        452ms                 |     5min       |
 |    100000       |    1000000      |        7sec & 12ms            |     timeout              |   
-All tests for over 100K vertices have resulted in a timeout.
 
+</div>
+All tests for over 100K vertices have resulted in a timeout.
 
 ### Tests
 
