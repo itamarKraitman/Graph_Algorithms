@@ -1,13 +1,20 @@
 package main.java.GUI;
 
+import main.java.api.DirectedWeightedGraph;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class Panel extends JPanel {
 
-    public Panel() {
-        this.setPreferredSize(new Dimension(500, 500));
+    private DirectedWeightedGraph graph;
+
+    public Panel(DirectedWeightedGraph graph) {
         this.setBackground(Color.WHITE);
+        this.graph = graph;
+
     }
+
+
 
 }

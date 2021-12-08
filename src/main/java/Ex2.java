@@ -42,9 +42,7 @@ public class Ex2 implements Runnable{
         DWGraph graph = new DWGraph(json_file);
         DWGraphAlgo graphAlgo = new DWGraphAlgo();
         graphAlgo.init(graph);
-        SwingUtilities.invokeLater(() -> {
-            UserWindow window = new UserWindow();
-        });
+        UserWindow window = new UserWindow(graphAlgo);
     }
 
     public static void main(String[] args) {

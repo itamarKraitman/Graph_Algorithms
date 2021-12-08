@@ -19,25 +19,27 @@ import javax.swing.*;
 public class UserWindow extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
 
     JFrame frame = new JFrame();
-    DWGraphAlgo graphAlgo = new DWGraphAlgo();
+    DWGraphAlgo graphAlgo;
     public JMenuBar menuBar;
     int vertexCount = 0, edgesCount = 0;
-    Panel panel = new Panel();
+    Panel panel;
     private Graphics graphics;
     private Image image;
 
-    public UserWindow() {
+    public UserWindow(DWGraphAlgo graph) {
+        graphAlgo = graph;
+        panel = new Panel(graph.getGraph());
+        this.add(panel);
 //        JFrame frame = new JFrame();
-        frame.setSize(800, 800);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(panel);
 //        frame.pack();
-        InitWindow(frame);
-        frame.setJMenuBar(this.menuBar);
-        frame.setVisible(true);
+        InitWindow();
     }
 
-    public void InitWindow(JFrame frame) {
+    public void InitWindow() {
+        this.setSize(800, 800);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
         this.menuBar = new JMenuBar();
         JMenu drawingMenu = new JMenu("Drawing Graph");
         drawingMenu.getAccessibleContext().setAccessibleDescription("Drawing Graph");
@@ -51,6 +53,7 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
         menuBar.add(algoMenu);
         menuBar.add(loadGraph);
         menuBar.add(saveGraph);
+
         JMenuItem drawNode = new JMenuItem("Add Vertex");
         drawNode.addActionListener(this);
 //        drawNode.addMouseListener(new MouseAdapter() {
@@ -196,6 +199,12 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
         algoMenu.add(shortestPath);
         algoMenu.add(Center);
         algoMenu.add(tsp);
+
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
+
+        this.setJMenuBar(this.menuBar);
+        this.setVisible(true);
     }
 
     @Override
@@ -224,7 +233,7 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
     public void paintVertex(Graphics g) {
 //        super.paintComponents(g);
 //        g = getGraphics();
-        Iterator<NodeData> iterator = graphAlgo.graph.nodeIter();
+        Iterator<NodeData> iterator = graphAlgo.getGraph().nodeIter();
         while (iterator.hasNext()) {
 //            Graphics2D g2d = (Graphics2D) g;
             g.setColor(Color.red);
@@ -282,7 +291,7 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
             Node vertex = new Node(vertexCount, new Geo_Location(Double.parseDouble(x), Double.parseDouble(y), 0));
             vertexCount++;
             graphAlgo.graph.addNode(vertex);
-            paint(graphics);
+            repaint();
         } else if (str.equals("Add Edge")) {
             String src = JOptionPane.showInputDialog(this, "Enter Source Vertex");
             String dest = JOptionPane.showInputDialog(this, "Enter destination vertex");
