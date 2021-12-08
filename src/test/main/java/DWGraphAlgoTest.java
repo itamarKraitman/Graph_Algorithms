@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DWGraphAlgoTest {
 
-    String path1 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G1.json";
-    String path2 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G2.json";
-    String path3 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G3.json";
-    String path4 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\1K_Nodes.json";
-    String path5 = "C:\\Users\\itama\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\10K_Nodes.json";
+    String path1 = "src/main/java/data/G1.json";
+    String path2 = "src/main/java/data/G2.json";
+    String path3 = "src/main/java/data/G3.json";
+    String path4 = "src/main/java/data/1K_Nodes.json";
+    String path5 = "src/main/java/data/10K_Nodes.json";
 
     DirectedWeightedGraph g1 = new DWGraph(path1);
     DirectedWeightedGraph g2 = new DWGraph(path2);
@@ -165,14 +165,20 @@ class DWGraphAlgoTest {
     // TODO: finish this test
     void save() {
         testInit();
-        String outputFile = "g1.json";
-        assertTrue(test1Graph.save(outputFile));
+        String outputFile1 = "G1.json";
+        String outputFile2 = "G2.json";
+        String outputFile3 = "G3.json";
+        String outputFile4 = "G4.json";
+        assertTrue(test1Graph.save(outputFile1));
+        assertTrue(test2Graph.save(outputFile2));
+        assertTrue(test3Graph.save(outputFile3));
+        assertTrue(test4Graph.save(outputFile4));
 //        assertFalse(test1Graph.save("g1.txt"));
         
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"C:\\Users\\yuval\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G1.json","C:\\Users\\yuval\\IdeaProjects\\OOP_Ex2\\src\\main\\java\\data\\G1.json"})
+    @ValueSource(strings = {"src/main/java/data/G1.json","src/main/java/data/G2.json"})
     void load(String path) {
         DirectedWeightedGraphAlgorithms g = new DWGraphAlgo();
         assertTrue(g.load(path));

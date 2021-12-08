@@ -2,6 +2,8 @@ package main.java.Algorithms;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import main.java.GraphClass.DWGraph;
 import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
@@ -215,22 +217,37 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     }
 
     @Override
-    // TODO: implement this fully & test it
     public boolean save(String file) {
         try {
-//            FileWriter f = new FileWriter("" + file);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//            String toWrite = gson.toJson("Nodes: " + this.graph.Nodes);
-//            String toWrite2 = gson.toJson("Edges: " + this.graph.Edges);
-////            String fullFile = "Edges: [\n" + toWrite2 + "],\"" + "Nodes: [" + toWrite + "]";
-//            f.write(toWrite2);
-//            f.write(toWrite);
-////            f.write("]");
-//            f.close();
-            Writer writer = Files.newBufferedWriter(Paths.get("g1,json"));
-            gson.toJson(this.graph.Edges, writer);
-            gson.toJson(this.graph.Nodes, writer);
-            writer.close();
+            JsonArray nodes = new JsonArray();
+            JsonArray edges = new JsonArray();
+            JsonObject graph = new JsonObject();
+            Iterator<EdgeData> edgeIter = this.getGraph().edgeIter();
+            Iterator<NodeData> nodeIter = this.getGraph().nodeIter();
+            EdgeData currentEdge;
+            NodeData currentNode;
+            while(edgeIter.hasNext()){
+                currentEdge = edgeIter.next();
+                JsonObject edgeObj = new JsonObject();
+                edgeObj.addProperty("src",currentEdge.getSrc());
+                edgeObj.addProperty("w",currentEdge.getWeight());
+                edgeObj.addProperty("dest",currentEdge.getDest());
+                edges.add(edgeObj);
+            }
+            while(nodeIter.hasNext()){
+                currentNode = nodeIter.next();
+                JsonObject nodeObj = new JsonObject();
+                double nodeX = currentNode.getPosition().x();
+                double nodeY = currentNode.getPosition().y();
+                double nodeZ = currentNode.getPosition().z();
+                nodeObj.addProperty("pos",nodeX+","+nodeY+","+nodeZ);
+                nodeObj.addProperty("id", currentNode.getKey());
+                nodes.add(nodeObj);
+            }
+            graph.add("Edges",edges);
+            graph.add("Nodes",nodes);
+            Files.writeString(Paths.get(file), gson.toJson(graph));
             return true;
         } catch (IOException e) {
             e.printStackTrace();
