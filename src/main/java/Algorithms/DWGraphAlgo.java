@@ -139,7 +139,6 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
     }
 
     // Nearest Neighbour modified to use Dijkstra if no suitable neighbours are found
-    // TODO: write a test
     @Override
     public List<NodeData> tsp(List<NodeData> cities) {
         if (cities == null || cities.size() == 0) {

@@ -1,5 +1,6 @@
 package main.java;
 import main.java.Algorithms.DWGraphAlgo;
+//import main.java.GUI.Menu;
 import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
 import main.java.GraphClass.DWGraph;
@@ -37,9 +38,5 @@ public class Ex2 {
      */
     // TODO: start implementing GUI & test it
     public static void runGUI(String json_file) {
-        DirectedWeightedGraphAlgorithms alg = getGrapgAlgo(json_file);
-        // ****** Add your code here ******
-        //
-        // ********************************
     }
 }
