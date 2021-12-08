@@ -53,7 +53,7 @@ Unlike the original TSP, we are allowed to repeat vertices and are allowed to tr
 Our approach to solving this problem is using Nearest Neighbour algorithm, which is a greedy algorithm that chooses the best closest neighbour, we modified it so if no neighbour is found - a Dijkstra iteration is performed to find a path through the entire graph to the next vertex in the subset, thus making sure as long as the subset is part of the same connected component - a solution can always be found.<br>
 Where N is the number of cities, the worst case analysis has us performing N Dijkstra iterations, thus the total worst-case analysis is O(N*|E|log(|V|)).
 
-###Algorithm Run Times
+### Algorithm Run Times
 
 |**Vertices** |**Edges**|     **Graph Connectivity**     |     **Center**     |
 |-------------|-------------|-------------------------|-------------------------- 
