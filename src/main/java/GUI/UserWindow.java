@@ -25,11 +25,18 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
     Panel panel;
     private Graphics graphics;
     private Image image;
+    private double maxX = Double.MAX_VALUE;
+    private double minX = Double.MAX_VALUE;
+    private double maxY = Double.MAX_VALUE;
+    private double minY = Double.MAX_VALUE;
+    private double X = Double.MAX_VALUE;
+    private  double Y = Double.MAX_VALUE;
 
     public UserWindow(DWGraphAlgo graph) {
         graphAlgo = graph;
         panel = new Panel(graph.getGraph());
         this.add(panel);
+        createCorrectSize();
 //        JFrame frame = new JFrame();
 //        frame.pack();
         InitWindow();
@@ -207,6 +214,26 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
         this.setVisible(true);
     }
 
+    public void createCorrectSize() {
+        Iterator<NodeData> iterator = this.graphAlgo.graph.nodeIter();
+        while (iterator.hasNext()) {
+            Node current = (Node) iterator.next();
+            // x position
+            if (current.getPosition().x() < minX)
+                minX = current.getPosition().x();
+            else if (current.getPosition().x() > maxX)
+                maxX = current.getPosition().x();
+            //y position
+            if (current.getPosition().y() < minY)
+                minY = current.getPosition().y();
+            else if (current.getPosition().y() > maxY)
+                maxY = current.getPosition().y();
+        }
+        X = Math.abs(maxX - minX);
+        Y = Math.abs(maxY - minY);
+
+    }
+
     @Override
     public void paintComponents(Graphics g) {
 //        Graphics2D g2d = (Graphics2D) g;
@@ -233,51 +260,68 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
     public void paintVertex(Graphics g) {
 //        super.paintComponents(g);
 //        g = getGraphics();
+        double scaleX = getWidth() / X;
+        double scaleY = getHeight() / Y;
         Iterator<NodeData> iterator = graphAlgo.getGraph().nodeIter();
         while (iterator.hasNext()) {
 //            Graphics2D g2d = (Graphics2D) g;
             g.setColor(Color.red);
             NodeData vertex = iterator.next();
-            g.fillOval((int) vertex.getPosition().x(), (int) vertex.getPosition().y(), 100, 100);
+            double currentX = vertex.getPosition().x();
+            double currentY = vertex.getPosition().y();
+            double finalX = (currentX - minX) * scaleX;
+            double finalY = (currentY - minY) * scaleY;
+            g.fillOval((int) finalX, (int) finalY, 25, 25);
         }
     }
 
     public void paintEdge(Graphics g) {
+        double scaleX = getWidth() / X;
+        double scaleY = getHeight() / Y;
 //        super.paintComponents(g);
 //        g = getGraphics();
         Iterator<EdgeData> iterator = graphAlgo.graph.edgeIter();
         while (iterator.hasNext()) {
             Edge edge = (Edge) iterator.next();
 //            Graphics2D g2d = (Graphics2D) g.create();
+            double srcX = this.graphAlgo.graph.getNode(edge.getSrc()).getPosition().x();
+            double srcY = this.graphAlgo.graph.getNode(edge.getSrc()).getPosition().y();
+            double destX = this.graphAlgo.graph.getNode(edge.getDest()).getPosition().x();
+            double destY = this.graphAlgo.graph.getNode(edge.getDest()).getPosition().y();
+            double finalSX = (srcX - minX) * scaleX;
+            double finalSY = (srcY - minY) * scaleY;
+            double finalDX = (destX - minX) * scaleX;
+            double finalDY = (destX - minX) * scaleY;
+
             g.setColor(Color.BLUE);
-            paintArrowLine(g, (Node) graphAlgo.graph.Nodes.get(edge.getSrc()), (Node) graphAlgo.graph.Nodes.get(edge.getDest()), 10, 10);
+            paintArrowLine(g, finalSX, finalSY, finalDX, finalDY, edge.getWeight(), 10);
         }
     }
 
-    private void paintArrowLine(Graphics g, Node src, Node dest, int width, int height) {
+    private void paintArrowLine(Graphics g, double SX, double SY, double DX, double DY, double width, double height) {
 //        super.paintComponents(g);
 //        g = getGraphics();
-        double v1x = src.getPosition().x();
-        double v1y = src.getPosition().y();
-        double v2x = dest.getPosition().x();
-        double v2y = dest.getPosition().y();
-        double dx = v2x - v1x, dy = v2y - v1y;
+//        double v1x = src.getPosition().x();
+//        double v1y = src.getPosition().y();
+//        double v2x = dest.getPosition().x();
+//        double v2y = dest.getPosition().y();
+        double dx = DX - SX, dy = DY - SX;
         double D = Math.sqrt(dx * dx + dy * dy);
         double xm = D - width, xn = xm, ym = height, yn = -height, x;
         double sin = dy / D, cos = dx / D;
 
-        x = xm * cos - ym * sin + v1x;
-        ym = xm * sin + ym * cos + v1y;
+        x = xm * cos - ym * sin + SX;
+        ym = xm * sin + ym * cos + SY;
         xm = x;
 
-        x = xn * cos - yn * sin + v1x;
-        yn = xn * sin + yn * cos + v1y;
+        x = xn * cos - yn * sin + SX;
+        yn = xn * sin + yn * cos + SY;
         xn = x;
 
-        int[] xpoints = {(int) v2x, (int) xm, (int) xn};
-        int[] ypoints = {(int) v2y, (int) ym, (int) yn};
+        int[] xpoints = {(int) DX * 10, (int) xm * 10, (int) xn * 10};
+        int[] ypoints = {(int) DY * 10, (int) ym * 10, (int) yn * 10};
 
-        g.drawLine((int) v1x, (int) v1y, (int) v2x, (int) v2y);
+        g.drawLine((int) SX * 10, (int) SY * 10, (int) DX * 10, (int) DY * 10);
         g.fillPolygon(xpoints, ypoints, 3);
     }
 
