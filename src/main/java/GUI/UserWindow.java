@@ -5,6 +5,7 @@ import main.java.GraphClass.DWGraph;
 import main.java.GraphClass.Edge;
 import main.java.GraphClass.Geo_Location;
 import main.java.GraphClass.Node;
+import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
 import main.java.api.EdgeData;
 import main.java.api.NodeData;
@@ -18,11 +19,10 @@ import javax.swing.*;
 
 public class UserWindow extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
 
-    JFrame frame = new JFrame();
-    DWGraphAlgo graphAlgo;
-    public JMenuBar menuBar;
-    int vertexCount = 0, edgesCount = 0;
-    Panel panel;
+    private DirectedWeightedGraphAlgorithms graphAlgo;
+    private DirectedWeightedGraph graph;
+    private JMenuBar menuBar;
+    private Panel panel;
     private Graphics graphics;
     private Image image;
     private double maxX = Double.MAX_VALUE;
@@ -31,31 +31,32 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
     private double minY = Double.MAX_VALUE;
     private double X = Double.MAX_VALUE;
     private  double Y = Double.MAX_VALUE;
+    private int vertexCount = 0, edgesCount = 0;
 
-    public UserWindow(DWGraphAlgo graph) {
+    private boolean addNode = true;
+
+    public UserWindow(DirectedWeightedGraphAlgorithms graph) {
+        super();
         graphAlgo = graph;
-        panel = new Panel(graph.getGraph());
-        this.add(panel);
-        createCorrectSize();
-//        JFrame frame = new JFrame();
-//        frame.pack();
+        this.panel = new Panel(graphAlgo.getGraph());
         InitWindow();
+        createCorrectSize();
+        this.add(panel);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addMouseListener(this);
+        this.getContentPane().add(panel);
+        this.pack();
+//        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
     }
 
     public void InitWindow() {
-        this.setSize(800, 800);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
         this.menuBar = new JMenuBar();
         JMenu drawingMenu = new JMenu("Drawing Graph");
-        drawingMenu.getAccessibleContext().setAccessibleDescription("Drawing Graph");
         JMenu algoMenu = new JMenu("Algorithms");
-        algoMenu.getAccessibleContext().setAccessibleDescription("Running algorithms on the graph");
         JMenu loadGraph = new JMenu("Load Graph");
-        loadGraph.getAccessibleContext().setAccessibleDescription("Load Graph From json");
         JMenu saveGraph = new JMenu("Save Graph");
-        saveGraph.getAccessibleContext().setAccessibleDescription("Save Graph To json");
         menuBar.add(drawingMenu);
         menuBar.add(algoMenu);
         menuBar.add(loadGraph);
@@ -63,144 +64,33 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
 
         JMenuItem drawNode = new JMenuItem("Add Vertex");
         drawNode.addActionListener(this);
-//        drawNode.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                String x = JOptionPane.showInputDialog(frame, "Enter X Value");
-//                String y = JOptionPane.showInputDialog(frame, "Enter Y Value");
-//                Node vertex = new Node(vertexCount, new Geo_Location(Double.parseDouble(x), Double.parseDouble(y), 0));
-//                vertexCount++;
-//                graphAlgo.graph.addNode(vertex);
-//                paint(graphics);
-//            }
-//        });
         JMenuItem drawEdge = new JMenuItem("Add Edge");
         drawEdge.addActionListener(this);
-//        drawEdge.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                String src = JOptionPane.showInputDialog(frame, "Enter Source Vertex");
-//                String dest = JOptionPane.showInputDialog(frame, "Enter destination vertex");
-//                String weight = JOptionPane.showInputDialog(frame, "Enter Weight");
-//                Edge edge = new Edge(Integer.parseInt(src), Integer.parseInt(dest), Double.parseDouble(weight));
-//                edgesCount++;
-//                graphAlgo.graph.connect(Integer.parseInt(src), Integer.parseInt(dest), Double.parseDouble(weight));
-//                paint(graphics);
-//            }
-//        });
-//        JMenuItem connect = new JMenuItem("Connect vertex");
         JMenuItem removeNode = new JMenuItem("Remove Vertex");
         removeNode.addActionListener(this);
-//        removeNode.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                String key = JOptionPane.showInputDialog(frame, "Enter Vertex Key");
-//                graphAlgo.graph.removeNode(Integer.parseInt(key));
-//                vertexCount--;
-//                paint(graphics);
-//            }
-//        });
         JMenuItem removeEdge = new JMenuItem("Remove Edge");
         removeEdge.addActionListener(this);
-//        removeEdge.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                String src = JOptionPane.showInputDialog(frame, "Enter source Vertex");
-//                String dest = JOptionPane.showInputDialog(frame, "Enter Destination Vertex");
-//                graphAlgo.graph.removeEdge(Integer.parseInt(src), Integer.parseInt(dest));
-//                edgesCount--;
-//                paint(graphics);
-//            }
-//        });
         JMenuItem nodeSize = new JMenuItem("How Many Vertex?");
         nodeSize.addActionListener(this);
-//        nodeSize.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                JOptionPane.showInputDialog("The Number Of Vertex In Graph is:\n" + graphAlgo.graph.nodeSize());
-//            }
-//        });
         JMenuItem edgeSize = new JMenuItem("How Many Edges?");
         edgeSize.addActionListener(this);
-//        edgeSize.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                JOptionPane.showInputDialog("The Number Of Edges In Graph Is:\n" + graphAlgo.graph.edgeSize());
-//            }
-//        });
         drawingMenu.add(drawNode);
         drawingMenu.add(drawEdge);
-//        drawingMenu.add(connect);
         drawingMenu.add(removeNode);
         drawingMenu.add(removeEdge);
         drawingMenu.add(nodeSize);
         drawingMenu.add(edgeSize);
+
         JMenuItem isConnected = new JMenuItem("Is Connected");
         isConnected.addActionListener(this);
-
-//        isConnected.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                JOptionPane.showInputDialog(graphAlgo.isConnected());
-//            }
-//        });
         JMenuItem shortestDistance = new JMenuItem("Shortest Distance");
         shortestDistance.addActionListener(this);
-
-//        shortestDistance.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                String src = JOptionPane.showInputDialog(frame, "Enter Source Vertex");
-//                String dest = JOptionPane.showInputDialog(frame, "Enter Destination Vertex");
-//                JOptionPane.showInputDialog(frame, graphAlgo.shortestPathDist(Integer.parseInt(src), Integer.parseInt(dest)));
-//            }
-//        });
         JMenuItem shortestPath = new JMenuItem("Shortest Path");
         shortestPath.addActionListener(this);
-
-//        shortestPath.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                //TODO complete this method
-//            }
-//        });
         JMenuItem Center = new JMenuItem("Center");
         Center.addActionListener(this);
-
-//        Center.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                Node vertex = (Node) graphAlgo.center();
-//                JOptionPane.showInputDialog("Center Vertex Of Graph is:\n" + vertex.getKey());
-//                paint(graphics);
-//            }
-//        });
         JMenuItem tsp = new JMenuItem("TSP algorithm");
         tsp.addActionListener(this);
-//        tsp.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                super.mousePressed(e);
-//                List<NodeData> cities = new ArrayList<>();
-//                String vertex = JOptionPane.showInputDialog("Enter vertex ID, To Finish Enter -1");
-//                while (!vertex.equals("-1")) {
-//                    cities.add(graphAlgo.graph.getNode(Integer.parseInt(vertex)));
-//                    vertex = JOptionPane.showInputDialog("Enter vertex ID, To Finish Enter -1");
-//                }
-//                List<NodeData> vertexInPath = graphAlgo.tsp(cities);
-//                //TODO- paint the path- continue
-//            }
-//        });
         algoMenu.add(isConnected);
         algoMenu.add(shortestDistance);
         algoMenu.add(shortestPath);
@@ -211,11 +101,10 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
         this.addMouseMotionListener(this);
 
         this.setJMenuBar(this.menuBar);
-        this.setVisible(true);
     }
 
     public void createCorrectSize() {
-        Iterator<NodeData> iterator = this.graphAlgo.graph.nodeIter();
+        Iterator<NodeData> iterator = this.graphAlgo.getGraph().nodeIter();
         while (iterator.hasNext()) {
             Node current = (Node) iterator.next();
             // x position
@@ -229,8 +118,8 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
             else if (current.getPosition().y() > maxY)
                 maxY = current.getPosition().y();
         }
-        X = Math.abs(maxX - minX);
-        Y = Math.abs(maxY - minY);
+        X = getWidth() / Math.abs(maxX - minX) * 0.975;
+        Y = getHeight() / Math.abs(maxY - minY) * 0.9;
 
     }
 
@@ -241,8 +130,9 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
         if (this.graphAlgo == null) return;
         super.paintComponents(g);
         Graphics2D g2d = (Graphics2D) g;
-        paintVertex(g);
-        paintEdge(g);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        paintVertex(g2d);
+        paintEdge(g2d);
     }
 
     public void paint(Graphics g) {
@@ -257,54 +147,42 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
         g.drawImage(image, 0, 0, this);
     }
 
-    public void paintVertex(Graphics g) {
-//        super.paintComponents(g);
-//        g = getGraphics();
-        double scaleX = getWidth() / X;
-        double scaleY = getHeight() / Y;
+    public void paintVertex(Graphics2D g) {
         Iterator<NodeData> iterator = graphAlgo.getGraph().nodeIter();
         while (iterator.hasNext()) {
-//            Graphics2D g2d = (Graphics2D) g;
-            g.setColor(Color.red);
             NodeData vertex = iterator.next();
             double currentX = vertex.getPosition().x();
             double currentY = vertex.getPosition().y();
-            double finalX = (currentX - minX) * scaleX;
-            double finalY = (currentY - minY) * scaleY;
+            double finalX = (currentX - minX) * X;
+            double finalY = (currentY - minY) * Y;
+            g.setColor(Color.red);
             g.fillOval((int) finalX, (int) finalY, 25, 25);
+            g.setFont(new Font("David", Font.ITALIC,12));
+            g.drawString("" + vertex.getKey(), (int) (finalX + 3), (int) (finalY + 7));
         }
     }
 
-    public void paintEdge(Graphics g) {
-        double scaleX = getWidth() / X;
-        double scaleY = getHeight() / Y;
-//        super.paintComponents(g);
-//        g = getGraphics();
-        Iterator<EdgeData> iterator = graphAlgo.graph.edgeIter();
+    public void paintEdge(Graphics2D g) {
+        Iterator<EdgeData> iterator = graphAlgo.getGraph().edgeIter();
         while (iterator.hasNext()) {
             Edge edge = (Edge) iterator.next();
-//            Graphics2D g2d = (Graphics2D) g.create();
-            double srcX = this.graphAlgo.graph.getNode(edge.getSrc()).getPosition().x();
-            double srcY = this.graphAlgo.graph.getNode(edge.getSrc()).getPosition().y();
-            double destX = this.graphAlgo.graph.getNode(edge.getDest()).getPosition().x();
-            double destY = this.graphAlgo.graph.getNode(edge.getDest()).getPosition().y();
-            double finalSX = (srcX - minX) * scaleX;
-            double finalSY = (srcY - minY) * scaleY;
-            double finalDX = (destX - minX) * scaleX;
-            double finalDY = (destX - minX) * scaleY;
+            double srcX = this.graphAlgo.getGraph().getNode(edge.getSrc()).getPosition().x();
+            double srcY = this.graphAlgo.getGraph().getNode(edge.getSrc()).getPosition().y();
+            double destX = this.graphAlgo.getGraph().getNode(edge.getDest()).getPosition().x();
+            double destY = this.graphAlgo.getGraph().getNode(edge.getDest()).getPosition().y();
+            double finalSX = (srcX - minX) * X;
+            double finalSY = (srcY - minY) * Y;
+            double finalDX = (destX - minX) * X;
+            double finalDY = (destX - minX) * Y;
 
+            String weight = edge.getWeight() + "";
             g.setColor(Color.BLUE);
             paintArrowLine(g, finalSX, finalSY, finalDX, finalDY, edge.getWeight(), 10);
+            g.drawString(weight, (int) (finalSX * 0.3 + finalDX * 0.7), (int) (finalSY * 0.3 + finalDY * 0.7));
         }
     }
 
     private void paintArrowLine(Graphics g, double SX, double SY, double DX, double DY, double width, double height) {
-//        super.paintComponents(g);
-//        g = getGraphics();
-//        double v1x = src.getPosition().x();
-//        double v1y = src.getPosition().y();
-//        double v2x = dest.getPosition().x();
-//        double v2y = dest.getPosition().y();
         double dx = DX - SX, dy = DY - SX;
         double D = Math.sqrt(dx * dx + dy * dy);
         double xm = D - width, xn = xm, ym = height, yn = -height, x;
@@ -325,16 +203,15 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
         g.fillPolygon(xpoints, ypoints, 3);
     }
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
         String str = e.getActionCommand();
         if (str.equals("Add Vertex")) {
-            String x = JOptionPane.showInputDialog(this.frame, "Enter X Value");
-            String y = JOptionPane.showInputDialog(this.frame, "Enter Y Value");
+            String x = JOptionPane.showInputDialog(this, "Enter X Value");
+            String y = JOptionPane.showInputDialog(this, "Enter Y Value");
             Node vertex = new Node(vertexCount, new Geo_Location(Double.parseDouble(x), Double.parseDouble(y), 0));
             vertexCount++;
-            graphAlgo.graph.addNode(vertex);
+            graphAlgo.getGraph().addNode(vertex);
             repaint();
         } else if (str.equals("Add Edge")) {
             String src = JOptionPane.showInputDialog(this, "Enter Source Vertex");
@@ -342,53 +219,81 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
             String weight = JOptionPane.showInputDialog(this, "Enter Weight");
             Edge edge = new Edge(Integer.parseInt(src), Integer.parseInt(dest), Double.parseDouble(weight));
             edgesCount++;
-            graphAlgo.graph.connect(Integer.parseInt(src), Integer.parseInt(dest), Double.parseDouble(weight));
+            graphAlgo.getGraph().connect(Integer.parseInt(src), Integer.parseInt(dest), Double.parseDouble(weight));
             repaint();
         } else if (str.equals("Remove Vertex")) {
             String key = JOptionPane.showInputDialog(this, "Enter Vertex Key");
-            graphAlgo.graph.removeNode(Integer.parseInt(key));
+            graphAlgo.getGraph().removeNode(Integer.parseInt(key));
             vertexCount--;
             repaint();
         }
         else if (str.equals("Remove Edge")) {
             String src = JOptionPane.showInputDialog(this, "Enter source Vertex");
             String dest = JOptionPane.showInputDialog(this, "Enter Destination Vertex");
-            graphAlgo.graph.removeEdge(Integer.parseInt(src), Integer.parseInt(dest));
+            graphAlgo.getGraph().removeEdge(Integer.parseInt(src), Integer.parseInt(dest));
             edgesCount--;
             repaint();
         }
         else if (str.equals("How Many Vertex?")) {
-            JOptionPane.showMessageDialog(this, "The Number Of Vertex In Graph is:\n" + graphAlgo.graph.nodeSize());
+            JOptionPane.showMessageDialog(this, "The Number Of Vertex In Graph is:\n" + graphAlgo.getGraph().nodeSize());
         }
         else if (str.equals("How Many Edges?")) {
-            JOptionPane.showMessageDialog(this,"The Number Of Edges In Graph Is:\n" + graphAlgo.graph.edgeSize());
+            JOptionPane.showMessageDialog(this,"The Number Of Edges In Graph Is:\n" + graphAlgo.getGraph().edgeSize());
         }
         else if (str.equals("Is Connected")) {
-            JOptionPane.showInputDialog(graphAlgo.isConnected());
+            boolean answer = graphAlgo.isConnected();
+            String message = "";
+            if (answer) message = "The Graph Is Connected";
+            else message = "The Graph Is Not Connected";
+            JOptionPane.showMessageDialog(this, message);
         }
         else if (str.equals("Shortest Distance")) {
             String src = JOptionPane.showInputDialog(this, "Enter Source Vertex");
             String dest = JOptionPane.showInputDialog(this, "Enter Destination Vertex");
-            JOptionPane.showInputDialog(this, graphAlgo.shortestPathDist(Integer.parseInt(src), Integer.parseInt(dest)));
+            JOptionPane.showMessageDialog(this, "Shortest Path Distance Is " + graphAlgo.shortestPathDist(Integer.parseInt(src), Integer.parseInt(dest)));
         }
         else if (str.equals("Shortest Path")) {
-            //TODO
+            String src = JOptionPane.showInputDialog(this, "Enter Source Vertex");
+            String dest = JOptionPane.showInputDialog(this, "Enter Destination Vertex");
+            List<NodeData> path = graphAlgo.shortestPath(Integer.parseInt(src), Integer.parseInt(dest));
+            JOptionPane.showMessageDialog(this, "Shortest Path Is:\n" + ToString(path));
         }
         else if (str.equals("Center")) {
             Node vertex = (Node) graphAlgo.center();
             JOptionPane.showInputDialog("Center Vertex Of Graph is:\n" + vertex.getKey());
-            //TODO- paint center node
         }
         else if (str.equals("TSP algorithm")) {
             List<NodeData> cities = new ArrayList<>();
             String vertex = JOptionPane.showInputDialog("Enter vertex ID, To Finish Enter -1");
             while (!vertex.equals("-1")) {
-                cities.add(graphAlgo.graph.getNode(Integer.parseInt(vertex)));
+                cities.add(graphAlgo.getGraph().getNode(Integer.parseInt(vertex)));
                 vertex = JOptionPane.showInputDialog("Enter vertex ID, To Finish Enter -1");
             }
             List<NodeData> vertexInPath = graphAlgo.tsp(cities);
-            //TODO- paint the path- continue
+            JOptionPane.showMessageDialog(this, "TSP Result For Those Vertexes Is:\n" + ToString(vertexInPath));
+
         }
+        else if (str.equals("Load Graph")) {
+            String filePath = JOptionPane.showInputDialog("Enter New JSON File Path");
+            DWGraph anotherGraph = new DWGraph(filePath);
+            this.graphAlgo.init(anotherGraph);
+            this.panel = new Panel(graphAlgo.getGraph());
+            repaint();
+        }
+        else if (str.equals("Save Graph")) {
+            graphAlgo.save("Graph.json");
+            JOptionPane.showMessageDialog(this, "File Was Saved");
+        }
+    }
+
+    private String ToString(List<NodeData> path) {
+        StringBuffer ans = new StringBuffer();
+        for (NodeData nodeData : path) {
+            ans.append(nodeData.getKey());
+            ans.append("->");
+        }
+        ans.delete(ans.length() - 2, ans.length());
+        return ans.substring(0);
     }
 
     @Override
@@ -398,7 +303,6 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
 
     @Override
     public void mousePressed(MouseEvent e) {
-
     }
 
     @Override

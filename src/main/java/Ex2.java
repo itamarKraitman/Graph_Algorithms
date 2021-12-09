@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 /**
  * This class is the main class for Ex2 - your implementation will be tested using this class.
  */
-public class Ex2 implements Runnable{
+public class Ex2 {
     /**
      * This static function will be used to test your implementation
      * @param json_file - a json file (e.g., G1.json - G3.gson)
@@ -19,7 +19,13 @@ public class Ex2 implements Runnable{
      */
     // TODO: implement test for this
     public static DirectedWeightedGraph getGrapg(String json_file) {
-        return new DWGraph(json_file);
+        try {
+            return new DWGraph(json_file);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return new DWGraph();
+        }
     }
     /**
      * This static function will be used to test your implementation
@@ -39,18 +45,12 @@ public class Ex2 implements Runnable{
      */
     // TODO: start implementing GUI & test it
     public static void runGUI(String json_file) {
-        DWGraph graph = new DWGraph(json_file);
-        DWGraphAlgo graphAlgo = new DWGraphAlgo();
-        graphAlgo.init(graph);
-        UserWindow window = new UserWindow(graphAlgo);
+        DirectedWeightedGraphAlgorithms graphAlgo = getGrapgAlgo(json_file);
+        new UserWindow(graphAlgo);
     }
 
     public static void main(String[] args) {
-        runGUI("src/main/java/data/G1.json");
-    }
-
-    @Override
-    public void run() {
-
+        String filePath = "src/main/java/data/G1.json";
+        runGUI(filePath);
     }
 }
