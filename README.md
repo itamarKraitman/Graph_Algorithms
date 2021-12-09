@@ -32,7 +32,7 @@ This graph uses an underlying graph object to create a new object which can supp
 * Finding The Center Of The Graph
 * Augmented Version Of TSP (Traveling Salesmen Problem)
 
-###Algorithm Complexity Analysis
+### Algorithm Complexity Analysis
 
 #### Graph Connectivity O(|V|+|E|)
 A given graph G=(V,E) is connected iff there exists a path from each vertex to every other vertex (in other words, it only has 1 connected component). <br>We check this by running DFS from a random vertex,making sure we visit every other vertex on the graph, then we transpose the graph's edges and run DFS from the same vertex again, if we visited all other nodes - graph is connected! further than that, since it is a directed graph, it is strongly connected.<br>
