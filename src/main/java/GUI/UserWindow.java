@@ -21,13 +21,13 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
 
     private DirectedWeightedGraphAlgorithms graphAlgo;
     private JMenuBar menuBar;
-    private Panel panel;
+    Panel panel;
 //    private double maxX = Double.MAX_VALUE;
 //    private double minX = Double.MAX_VALUE;
 //    private double maxY = Double.MAX_VALUE;
 //    private double minY = Double.MAX_VALUE;
-////    private double X = Double.MAX_VALUE;
-////    private  double Y = Double.MAX_VALUE;
+//    private double X = Double.MAX_VALUE;
+//    private  double Y = Double.MAX_VALUE;
     private Graphics g;
     private int vertexCount = 0, edgesCount = 0;
 
@@ -35,15 +35,17 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
         super();
         graphAlgo = graph;
         this.panel = new Panel(graphAlgo.getGraph());
+//        this.add(this.panel, BorderLayout.PAGE_START);
         InitWindow();
-//        createCorrectSize();
         this.add(panel);
+        this.pack();
+//        createCorrectSize();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.addMouseListener(this);
-        this.getContentPane().add(panel);
-        this.pack();
         this.setResizable(true);
+
         this.setVisible(true);
+
     }
 
     public void InitWindow() {
@@ -115,7 +117,7 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
 //        }
 //        X = getWidth() / Math.abs(maxX - minX) * 0.975;
 //        Y = getHeight() / Math.abs(maxY - minY) * 0.9;
-//
+
 //    }
 
 //    @Override

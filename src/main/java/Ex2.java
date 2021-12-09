@@ -1,6 +1,7 @@
 package main.java;
 import main.java.Algorithms.DWGraphAlgo;
 //import main.java.GUI.Menu;
+import main.java.GUI.MyFrame;
 import main.java.GUI.UserWindow;
 import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;

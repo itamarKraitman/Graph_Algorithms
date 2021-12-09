@@ -17,77 +17,104 @@ public class Panel extends JPanel {
     private double minX = Double.MAX_VALUE;
     private double maxY = Double.MAX_VALUE;
     private double minY = Double.MAX_VALUE;
-    private double X = Double.MAX_VALUE;
-    private  double Y = Double.MAX_VALUE;
+    private int X = Integer.MAX_VALUE;
+    private int Y = Integer.MAX_VALUE;
     Graphics graphics;
     Image image;
 
     public Panel(DirectedWeightedGraph graph) {
-        this.setBackground(Color.WHITE);
         this.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+        this.setBackground(Color.WHITE);
         this.setFocusable(true);
         this.graph = graph;
+        Iterator<NodeData> n = graph.nodeIter();
+        NodeData vertex = n.next();
+        minX = vertex.getPosition().x();
+        minY = vertex.getPosition().y();
+        maxX = vertex.getPosition().x();
+        maxY = vertex.getPosition().y();
+        while (n.hasNext()) {
+            vertex = n.next();
+            minX = Math.min(minX, vertex.getPosition().x());
+            minY = Math.min(minY, vertex.getPosition().y());
+
+            maxX = Math.max(maxX, vertex.getPosition().x());
+            maxY = Math.max(maxY, vertex.getPosition().y());
+        }
     }
 
-    @Override
-    public void paintComponents(Graphics g) {
-        if (this.graph == null) return;
-        super.paintComponents(g);
-        Graphics2D g2d = (Graphics2D) g;
-//        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        paintVertex(g2d);
-        paintEdge(g2d);
+    private void findEdge() {
+        Iterator<NodeData> n = graph.nodeIter();
+        NodeData node = n.next();
+        minX = node.getPosition().x();
+        minY = node.getPosition().y();
+        maxX = node.getPosition().x();
+        maxY = node.getPosition().y();
+        while (n.hasNext()) {
+            node = n.next();
+            minX = Math.min(minX, node.getPosition().x());
+            minY = Math.min(minY, node.getPosition().y());
+
+            maxX = Math.max(maxX, node.getPosition().x());
+            maxY = Math.max(maxY, node.getPosition().y());
+        }
+        createCorrectSize();
     }
 
     public void paint(Graphics g) {
         // Create a new "canvas"
-        this.image = createImage(800, 800);
+        this.image = createImage(1600,1600);
         graphics = image.getGraphics();
 
         // Draw on the new "canvas"
-        paintComponents(graphics);
+        paintComponent(graphics);
 
         // "Switch" the old "canvas" for the new one
         g.drawImage(image, 0, 0, this);
     }
 
-    public void paintVertex(Graphics2D g) {
-        Iterator<NodeData> iterator = graph.nodeIter();
-        while (iterator.hasNext()) {
-            NodeData vertex = iterator.next();
+    @Override
+    protected void paintComponent(Graphics g) {
+        if (this.graph == null) return;
+        super.paintComponent(g);
+        createCorrectSize();
+        // painting vertexes
+        Graphics2D g2d = (Graphics2D) g;
+        Iterator<NodeData> vertexIter = graph.nodeIter();
+        while (vertexIter.hasNext()) {
+            NodeData vertex = vertexIter.next();
             double currentX = vertex.getPosition().x();
             double currentY = vertex.getPosition().y();
-            double finalX = (currentX - minX) * X;
-            double finalY = (currentY - minY) * Y;
+            double finalX = (int) ((currentX - minX) * X);
+            double finalY = (int) ((currentY - minY) * Y);
             g.setColor(Color.red);
-            g.fillOval((int) finalX, (int) finalY, 25, 25);
-            g.setFont(new Font("David", Font.ITALIC,12));
-            g.drawString("" + vertex.getKey(), (int) (finalX + 3), (int) (finalY + 7));
+            g.fillOval((int) finalX, (int) finalY, 20, 20);
+            g.setFont(new Font("David", Font.ITALIC, 12));
+            g.drawString("" + vertex.getKey(), (int) (finalX + 8), (int) (finalY + 15));
         }
-    }
-
-    public void paintEdge(Graphics2D g) {
-        Iterator<EdgeData> iterator = graph.edgeIter();
-        while (iterator.hasNext()) {
-            Edge edge = (Edge) iterator.next();
-            double srcX = this.graph.getNode(edge.getSrc()).getPosition().x();
-            double srcY = this.graph.getNode(edge.getSrc()).getPosition().y();
-            double destX = this.graph.getNode(edge.getDest()).getPosition().x();
-            double destY = this.graph.getNode(edge.getDest()).getPosition().y();
-            double finalSX = (srcX - minX) * X;
-            double finalSY = (srcY - minY) * Y;
-            double finalDX = (destX - minX) * X;
-            double finalDY = (destX - minX) * Y;
-
-            String weight = edge.getWeight() + "";
+        Iterator<EdgeData> edgesIter = graph.edgeIter();
+        while (edgesIter.hasNext()) {
+            Edge currentEdge = (Edge) edgesIter.next();
+            double SX = (graph.getNode(currentEdge.getSrc()).getPosition().x() - minX) * X + 10;
+            double SY = (graph.getNode(currentEdge.getSrc()).getPosition().y() - minY) * Y + 10;
+            double DX = (graph.getNode(currentEdge.getDest()).getPosition().x() - minX) * X + 10;
+            double DY = (graph.getNode(currentEdge.getDest()).getPosition().y() - minY) * Y + 10;
             g.setColor(Color.BLUE);
-            paintArrowLine(g, finalSX, finalSY, finalDX, finalDY, edge.getWeight(), 10);
-            g.drawString(weight, (int) (finalSX * 0.3 + finalDX * 0.7), (int) (finalSY * 0.3 + finalDY * 0.7));
+            paintArrowLine(g, (int) SX, (int) SY, (int) DX, (int) DY, 30, 7);
+            // weight
+            String weight;
+            try {
+                weight = String.valueOf(currentEdge.getWeight()).substring(0, String.valueOf(currentEdge.getWeight()).indexOf(".") + 5);
+                g.setColor(Color.BLACK);
+                g.drawString(weight, (int) (SX * 0.25 + DX * 0.75), (int) (SY * 0.25 + DY * 0.75));
+                g.setFont(new Font("David", Font.ITALIC, 16));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
-
-    private void paintArrowLine(Graphics g, double SX, double SY, double DX, double DY, double width, double height) {
-        double dx = DX - SX, dy = DY - SX;
+    private void paintArrowLine(Graphics g, int SX, int SY, int DX, int DY, int width, int height) {
+        int dx = DX - SX, dy = DY - SY;
         double D = Math.sqrt(dx * dx + dy * dy);
         double xm = D - width, xn = xm, ym = height, yn = -height, x;
         double sin = dy / D, cos = dx / D;
@@ -100,31 +127,16 @@ public class Panel extends JPanel {
         yn = xn * sin + yn * cos + SY;
         xn = x;
 
-        int[] xpoints = {(int) DX * 10, (int) xm * 10, (int) xn * 10};
-        int[] ypoints = {(int) DY * 10, (int) ym * 10, (int) yn * 10};
+        int[] xpoints = {DX, (int) xm, (int) xn};
+        int[] ypoints = {DY, (int) ym, (int) yn};
 
-        g.drawLine((int) SX * 10, (int) SY * 10, (int) DX * 10, (int) DY * 10);
+        g.drawLine( SX, SY,  DX,  DY);
         g.fillPolygon(xpoints, ypoints, 3);
     }
 
     public void createCorrectSize() {
-        Iterator<NodeData> iterator = this.graph.nodeIter();
-        while (iterator.hasNext()) {
-            Node current = (Node) iterator.next();
-            // x position
-            if (current.getPosition().x() < minX)
-                minX = current.getPosition().x();
-            else if (current.getPosition().x() > maxX)
-                maxX = current.getPosition().x();
-            //y position
-            if (current.getPosition().y() < minY)
-                minY = current.getPosition().y();
-            else if (current.getPosition().y() > maxY)
-                maxY = current.getPosition().y();
-        }
-        X = getWidth() / Math.abs(maxX - minX) * 0.975;
-        Y = getHeight() / Math.abs(maxY - minY) * 0.9;
-
+        X = (int) (getWidth() / Math.abs(maxX - minX) * 0.975);
+        Y = (int) (getHeight() / Math.abs(maxY - minY) * 0.9);
     }
 
 }
