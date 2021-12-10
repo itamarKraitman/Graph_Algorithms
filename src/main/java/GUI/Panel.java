@@ -12,18 +12,18 @@ import java.util.Iterator;
 
 public class Panel extends JPanel {
 
-    private DirectedWeightedGraph graph;
-    private double maxX = Double.MAX_VALUE;
-    private double minX = Double.MAX_VALUE;
-    private double maxY = Double.MAX_VALUE;
-    private double minY = Double.MAX_VALUE;
+    public DirectedWeightedGraph graph;
+    private double maxX;
+    private double minX;
+    private double maxY;
+    private double minY;
     private int X = Integer.MAX_VALUE;
     private int Y = Integer.MAX_VALUE;
     Graphics graphics;
     Image image;
 
     public Panel(DirectedWeightedGraph graph) {
-        this.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+        this.setPreferredSize(new Dimension(1000,800));
         this.setBackground(Color.WHITE);
         this.setFocusable(true);
         this.graph = graph;
@@ -41,24 +41,6 @@ public class Panel extends JPanel {
             maxX = Math.max(maxX, vertex.getPosition().x());
             maxY = Math.max(maxY, vertex.getPosition().y());
         }
-    }
-
-    private void findEdge() {
-        Iterator<NodeData> n = graph.nodeIter();
-        NodeData node = n.next();
-        minX = node.getPosition().x();
-        minY = node.getPosition().y();
-        maxX = node.getPosition().x();
-        maxY = node.getPosition().y();
-        while (n.hasNext()) {
-            node = n.next();
-            minX = Math.min(minX, node.getPosition().x());
-            minY = Math.min(minY, node.getPosition().y());
-
-            maxX = Math.max(maxX, node.getPosition().x());
-            maxY = Math.max(maxY, node.getPosition().y());
-        }
-        createCorrectSize();
     }
 
     public void paint(Graphics g) {
@@ -89,7 +71,8 @@ public class Panel extends JPanel {
             double finalY = (int) ((currentY - minY) * Y);
             g.setColor(Color.red);
             g.fillOval((int) finalX, (int) finalY, 20, 20);
-            g.setFont(new Font("David", Font.ITALIC, 12));
+            g.setFont(new Font("David", Font.BOLD, 16));
+            g.setColor(Color.BLACK);
             g.drawString("" + vertex.getKey(), (int) (finalX + 8), (int) (finalY + 15));
         }
         Iterator<EdgeData> edgesIter = graph.edgeIter();
@@ -130,7 +113,7 @@ public class Panel extends JPanel {
         int[] xpoints = {DX, (int) xm, (int) xn};
         int[] ypoints = {DY, (int) ym, (int) yn};
 
-        g.drawLine( SX, SY,  DX,  DY);
+        g.drawLine(SX, SY, DX, DY);
         g.fillPolygon(xpoints, ypoints, 3);
     }
 

@@ -12,6 +12,7 @@ import main.java.api.NodeData;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,7 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
 //    private  double Y = Double.MAX_VALUE;
     private Graphics g;
     private int vertexCount = 0, edgesCount = 0;
+    boolean pressedToAdd = false;
 
     public UserWindow(DirectedWeightedGraphAlgorithms graph) {
         super();
@@ -195,12 +197,8 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
     public void actionPerformed(ActionEvent e) {
         String str = e.getActionCommand();
         if (str.equals("Add Vertex")) {
-            String x = JOptionPane.showInputDialog(this, "Enter X Value");
-            String y = JOptionPane.showInputDialog(this, "Enter Y Value");
-            Node vertex = new Node(vertexCount, new Geo_Location(Double.parseDouble(x), Double.parseDouble(y), 0));
-            vertexCount++;
-            graphAlgo.getGraph().addNode(vertex);
-            repaint();
+//            JOptionPane.showMessageDialog(this, "Press On The Screen To Add New Vertex");
+            pressedToAdd = true;
         } else if (str.equals("Add Edge")) {
             String src = JOptionPane.showInputDialog(this, "Enter Source Vertex");
             String dest = JOptionPane.showInputDialog(this, "Enter destination vertex");
@@ -291,6 +289,12 @@ public class UserWindow extends JFrame implements ActionListener, MouseListener,
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if (pressedToAdd) {
+            setVisible(false);
+
+            repaint();
+        }
+        pressedToAdd = false;
     }
 
     @Override
