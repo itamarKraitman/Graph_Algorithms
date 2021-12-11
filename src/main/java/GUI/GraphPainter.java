@@ -75,7 +75,6 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
     }
 
     public void refreshPainter(DirectedWeightedGraphAlgorithms g) {
-        this.removeAll();
         this.graphAlgo = g;
         this.graph = g.getGraph();
         this.widthArrow = 10.0;
