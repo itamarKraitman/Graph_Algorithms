@@ -51,7 +51,7 @@ public class Ex2 {
     }
 
     public static void main(String[] args) {
-        String filePath = "src/main/java/data/G1.json";
+        String filePath = "src/main/java/data/G2.json";
         runGUI(filePath);
     }
 //        if(args.length != 0){

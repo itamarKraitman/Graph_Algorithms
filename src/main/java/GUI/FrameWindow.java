@@ -13,7 +13,7 @@ public class FrameWindow extends JFrame {
     public FrameWindow(DirectedWeightedGraphAlgorithms g){
 
         this.graphAlgo = g;
-        this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+        this.setSize(1000, 1000);
         this.setBackground(Color.WHITE);
         this.setTitle("OOP 2021 Ex2 GUI - Yuval Bubnovsky & Itamar Kraitman");
         this.setLocationRelativeTo(null);

@@ -26,6 +26,7 @@ public class UserMenu extends JMenuBar implements ActionListener {
     JFileChooser fc;
     JMenu fileMnu, drawMnu, algoMnu;
 
+
     public UserMenu(DirectedWeightedGraphAlgorithms g, GraphPainter painter, FrameWindow frame) {
         this.frame = frame;
         this.painter = painter;
@@ -47,6 +48,8 @@ public class UserMenu extends JMenuBar implements ActionListener {
         JMenuItem removeEdge = new JMenuItem("Remove Edge");
         JMenuItem numVer = new JMenuItem("Number Of Vertices");
         JMenuItem numEdg = new JMenuItem("Number Of Edges");
+        JMenuItem getVer = new JMenuItem("Get Vertex Details");
+        JMenuItem getEdg = new JMenuItem("Get Edge Details");
 
         addNode.addActionListener(this);
         removeNode.addActionListener(this);
@@ -54,6 +57,8 @@ public class UserMenu extends JMenuBar implements ActionListener {
         removeEdge.addActionListener(this);
         numVer.addActionListener(this);
         numEdg.addActionListener(this);
+        getVer.addActionListener(this);
+        getEdg.addActionListener(this);
 
         JMenuItem connected = new JMenuItem("Is Connected?");
         JMenuItem center = new JMenuItem("Center Of Graph");
@@ -77,6 +82,8 @@ public class UserMenu extends JMenuBar implements ActionListener {
         this.drawMnu.addSeparator();
         this.drawMnu.add(numVer);
         this.drawMnu.add(numEdg);
+        this.drawMnu.add(getVer);
+        this.drawMnu.add(getEdg);
 
 
         this.algoMnu.add(connected);
@@ -100,13 +107,19 @@ public class UserMenu extends JMenuBar implements ActionListener {
                 String x_pos = JOptionPane.showInputDialog(this, "Enter X Position");
                 String y_pos = JOptionPane.showInputDialog(this, "Enter Y Position");
 
+                double finalX = Double.parseDouble(x_pos);
+                double finalY = Double.parseDouble(y_pos);
 
-                Geo_Location loc = new Geo_Location(Double.parseDouble(x_pos), Double.parseDouble(y_pos), 0);
+//                Geo_Location loc = new Geo_Location(Double.parseDouble(x_pos), Double.parseDouble(y_pos), 0);
+                Geo_Location loc = new Geo_Location(finalX, finalY, 0);
                 NodeData node = new Node(Integer.parseInt(id), loc);
 
-
+//                double[] XY;
+//                XY = painter.linearTransform(node.getPosition());
                 this.graphAlgo.getGraph().addNode(node);
+                this.painter.refreshPainter(graphAlgo);
                 getTopLevelAncestor().repaint();
+//                repaint();
             }
             case "Add Edge" -> {
                 String src = JOptionPane.showInputDialog(this, "Enter Source Vertex");
@@ -185,6 +198,15 @@ public class UserMenu extends JMenuBar implements ActionListener {
                     this.graphAlgo.save(this.fc.getSelectedFile().getPath());
                     JOptionPane.showMessageDialog(this, "File Was Saved");
                 }
+            }
+            case "Get Vertex Details" -> {
+                String vertex = JOptionPane.showInputDialog(this, "Enter Vertex ID\n");
+                JOptionPane.showMessageDialog(this, this.graphAlgo.getGraph().getNode(Integer.parseInt(vertex)).getInfo());
+            }
+            case "Get Edge Details" -> {
+                String src = JOptionPane.showInputDialog(this, "Enter Edge Source");
+                String dest = JOptionPane.showInputDialog(this, "Enter Edge Destination");
+                JOptionPane.showMessageDialog(this, this.graphAlgo.getGraph().getEdge(Integer.parseInt(src), Integer.parseInt(dest)));
             }
         }
     }

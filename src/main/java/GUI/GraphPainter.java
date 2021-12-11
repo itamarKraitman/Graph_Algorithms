@@ -75,6 +75,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
     }
 
     public void refreshPainter(DirectedWeightedGraphAlgorithms g) {
+        this.removeAll();
         this.graphAlgo = g;
         this.graph = g.getGraph();
         this.widthArrow = 10.0;
@@ -96,14 +97,21 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         double[] X, Y;
         Iterator<EdgeData> edgeIt = this.graph.edgeIter();
         EdgeData temp;
-        while (edgeIt!=null && edgeIt.hasNext()) {
+        while (edgeIt != null && edgeIt.hasNext()) {
             temp = edgeIt.next();
-            if (temp == null) {break;}
+            if (temp == null) {
+                break;
+            }
             X = linearTransform(this.graph.getNode(temp.getSrc()).getPosition());
             Y = linearTransform(this.graph.getNode(temp.getDest()).getPosition());
             graphic.setColor(this.defaultEdgeColor);
             drawArrow(graphic, X[0], X[1], Y[0], Y[1]);
-            //graphic.drawString(""+temp.getWeight(),(int)X[0],(int)X[1]); - too messy
+            // drawing weight
+            graphic.setColor(Color.BLUE);
+            graphic.setFont(new Font("Ariel", Font.BOLD, 12));
+            String weight = temp.getWeight() + "";
+//            weight = weight.substring(0, weight.indexOf(".") + 5);
+//            graphic.drawString(weight,(int)X[0] + 2,(int)Y[1] + 2);
         }
 
         graphic.setStroke(this.nodeStroke);
@@ -114,8 +122,8 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
             tempNode = nodeIt.next();
             XY = linearTransform(tempNode.getPosition());
             graphic.setColor(this.defaultNodeColor);
-            graphic.fillOval((int)XY[0]-5,(int)XY[1]-5,10,10);
-            graphic.drawString(""+tempNode.getKey(),(int)XY[0]+10,(int)XY[1]-5);
+            graphic.fillOval((int) XY[0] - 5, (int) XY[1] - 5, 10, 10);
+            graphic.drawString("" + tempNode.getKey(), (int) XY[0] + 10, (int) XY[1] - 5);
         }
     }
 
@@ -125,8 +133,8 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         double delPicX = this.max_x - this.min_x;
         double delCurrY = this.max_y - point.y();
         double delPicY = this.max_y - this.min_y;
-        double x = (delCurrX / delPicX * (this.width)*0.8 + (this.height)*0.1);
-        double y = (delCurrY / delPicY * (this.width)*0.8 + (this.height)*0.1);
+        double x = (delCurrX / delPicX * (this.width) * 0.8 + (this.height) * 0.1);
+        double y = (delCurrY / delPicY * (this.width) * 0.8 + (this.height) * 0.1);
         return new double[]{x, y};
     }
 
@@ -155,16 +163,20 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int id = this.graphAlgo.getGraph().nodeSize()-1;
-        Geo_Location loc = new Geo_Location(e.getX(), e.getY(), 0);
-        NodeData node = new Node(id, loc);
-        this.graphAlgo.getGraph().addNode(node);
-        getTopLevelAncestor().repaint();
+//        int id = this.graphAlgo.getGraph().nodeSize() - 1;
+//        Geo_Location loc = new Geo_Location(e.getX(), e.getY(), 0);
+//        NodeData node = new Node(id, loc);
+//        this.graphAlgo.getGraph().addNode(node);
+//        getTopLevelAncestor().repaint();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        int id = this.graphAlgo.getGraph().nodeSize() - 1;
+        Geo_Location loc = new Geo_Location(e.getX(), e.getY(), 0);
+        NodeData node = new Node(id, loc);
+        this.graphAlgo.getGraph().addNode(node);
+        getTopLevelAncestor().repaint();
     }
 
     @Override
@@ -205,6 +217,6 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
 //        if (this.zoomInOut + temp > 0.05) {
 //            this.zoomInOut = this.zoomInOut + temp;
 //            repaint();
-        }
     }
+}
 
