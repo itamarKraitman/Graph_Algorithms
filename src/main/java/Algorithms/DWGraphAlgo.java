@@ -25,6 +25,11 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         this.graph = new DWGraph();
     }
 
+    public DWGraphAlgo(DirectedWeightedGraph g){
+        DirectedWeightedGraphAlgorithms G = new DWGraphAlgo();
+        G.init(g);
+    }
+
     @Override
     public void init(DirectedWeightedGraph g) {
         this.graph = (DWGraph) g;

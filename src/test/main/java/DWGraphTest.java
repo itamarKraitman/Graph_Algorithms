@@ -140,6 +140,7 @@ class DWGraphTest {
         testGraph.removeNode(1);
         assertFalse(testGraph.Edges.containsKey(0));
         assertFalse(testGraph.Nodes.containsKey(0));
+        assertEquals(30,testGraph.edgeSize());
         assertFalse(testGraph.Nodes.containsKey(1));
     }
 

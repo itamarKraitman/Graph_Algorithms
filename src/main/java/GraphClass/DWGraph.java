@@ -5,16 +5,16 @@ import main.java.api.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class DWGraph implements DirectedWeightedGraph {
 
-    public Map<Integer, NodeData> Nodes = new HashMap<>();
-    public Map<Integer, HashMap<Integer, EdgeData>> Edges = new HashMap<>();
-    public Map<Integer, HashMap<Integer, EdgeData>> reversedEdges = new HashMap<>();
+    public Map<Integer, NodeData> Nodes = new ConcurrentHashMap<>();
+    public Map<Integer, ConcurrentHashMap<Integer, EdgeData>> Edges = new ConcurrentHashMap<>();
+    public Map<Integer, ConcurrentHashMap<Integer, EdgeData>> reversedEdges = new ConcurrentHashMap<>();
+    int edgeCounter = 0;
     private int modCount = 0;
 
     // Empty Constructor
@@ -29,27 +29,41 @@ public class DWGraph implements DirectedWeightedGraph {
             JsonElement fileElement = JsonParser.parseReader(new FileReader(input));
             JsonObject fileObject = fileElement.getAsJsonObject();
             JsonArray arrayOfEdges = fileObject.get("Edges").getAsJsonArray();
+
+
             for (JsonElement graphElement : arrayOfEdges) {
                 JsonObject graphEdge = graphElement.getAsJsonObject();
                 int source = graphEdge.get("src").getAsInt();
                 double weight = graphEdge.get("w").getAsDouble();
                 int destination = graphEdge.get("dest").getAsInt();
+
+
                 Edge edge = new Edge(source, destination, weight);
-                HashMap<Integer, EdgeData> tempEdge = new HashMap<>();
+                ConcurrentHashMap<Integer, EdgeData> tempEdge = new ConcurrentHashMap<>();
+
+
                 if (Edges.containsKey(source)) {
                     Edges.get(source).put(destination, edge);
+                    this.edgeCounter++;
                 } else {
                     tempEdge.put(edge.getDest(), edge);
                     Edges.put(edge.getSrc(), tempEdge);
+                    this.edgeCounter++;
                 }
             }
+
+
             for (JsonElement graphElement : arrayOfEdges) {
                 JsonObject graphEdge = graphElement.getAsJsonObject();
                 int source = graphEdge.get("dest").getAsInt();
                 double weight = graphEdge.get("w").getAsDouble();
                 int destination = graphEdge.get("src").getAsInt();
+
+
                 Edge edge = new Edge(source, destination, weight);
-                HashMap<Integer, EdgeData> tempEdge = new HashMap<>();
+                ConcurrentHashMap<Integer, EdgeData> tempEdge = new ConcurrentHashMap<>();
+
+
                 if (reversedEdges.containsKey(source)) {
                     reversedEdges.get(source).put(destination, edge);
                 } else {
@@ -57,17 +71,25 @@ public class DWGraph implements DirectedWeightedGraph {
                     reversedEdges.put(edge.getSrc(), tempEdge);
                 }
             }
+
+
             JsonArray arrayOfNodes = fileObject.get("Nodes").getAsJsonArray();
             for (JsonElement graphElement : arrayOfNodes) {
                 JsonObject graphNode = graphElement.getAsJsonObject();
                 String position = graphNode.get("pos").getAsString();
                 String[] positions = position.split("[,]");
+
+
                 double x = Double.parseDouble(positions[0]);
                 double y = Double.parseDouble(positions[1]);
                 double z = Double.parseDouble(positions[2]);
                 int id = graphNode.get("id").getAsInt();
+
+
                 Geo_Location pos = new Geo_Location(x, y, z);
                 Node node = new Node(id, pos);
+
+
                 Nodes.put(node.getKey(), node);
             }
 
@@ -77,7 +99,6 @@ public class DWGraph implements DirectedWeightedGraph {
     }
 
     // copy constructor
-    // TODO: Test if this function really does a "deep" copy of the graph
     public DWGraph(DWGraph g){
         this.Nodes = g.Nodes;
         this.Edges = g.Edges;
@@ -99,7 +120,6 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public void addNode(NodeData n)  {
-        // TODO: decide how to handle if key value already exists
         int key = n.getKey();
         if(this.Nodes.containsKey(n.getKey())) {
             key = Nodes.size();
@@ -115,10 +135,11 @@ public class DWGraph implements DirectedWeightedGraph {
         if (Edges.containsKey(src)) {
             Edges.get(src).put(dest, toAdd);
         } else {
-            HashMap<Integer, EdgeData> tempEdge = new HashMap<>();
+            ConcurrentHashMap<Integer, EdgeData> tempEdge = new ConcurrentHashMap<>();
             tempEdge.put(toAdd.getDest(), toAdd);
             Edges.put(toAdd.getSrc(), tempEdge);
         }
+        this.edgeCounter++;
         this.modCount++;
     }
 
@@ -177,7 +198,7 @@ public class DWGraph implements DirectedWeightedGraph {
     public Iterator<EdgeData> edgeIter() {
         return new Iterator<>() {
 
-            private final Iterator<HashMap<Integer, EdgeData>> it = Edges.values().iterator();
+            private final Iterator<ConcurrentHashMap<Integer, EdgeData>> it = Edges.values().iterator();
             private Iterator<EdgeData> edgeIt = null;
             private EdgeData value = null;
             public int counter = getMC();
@@ -285,7 +306,8 @@ public class DWGraph implements DirectedWeightedGraph {
         return new Iterator<>() {
 
             private final Iterator<EdgeData> it = reversedEdges.get(node_id).values().iterator();
-            private final int counter = getMC();
+            private int counter = getMC();
+            private EdgeData value = null;
 
             @Override
             public boolean hasNext() {
@@ -301,8 +323,29 @@ public class DWGraph implements DirectedWeightedGraph {
                     throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                 }
                 if (hasNext()) {
-                    return it.next();
+                    value = it.next();
+                    return value;
                 } else throw new NullPointerException("Iterator Has No Next Value");
+            }
+
+            @Override
+            public void remove() {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                if (value != null) {
+                    removeEdge(value.getSrc(), value.getDest());
+                    this.counter = getMC();
+                }
+            }
+            @Override
+            public void forEachRemaining(Consumer<? super EdgeData> action) {
+                if (getMC() != counter) {
+                    throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
+                }
+                while(it.hasNext()){
+                    action.accept(next());
+                }
             }
         };
     }
@@ -311,27 +354,31 @@ public class DWGraph implements DirectedWeightedGraph {
     @Override
     public NodeData removeNode(int key) {
         removeIngoingEdges(key); // removing all ingoing edges
-        this.Edges.remove(key);
-        this.modCount++;
-        return Nodes.remove(key);
-    }
+        Set<Integer> toRemove = this.Edges.get(key).keySet();
+            for (int dest : toRemove) {
+                this.removeEdge(key, dest);
+            }
+            this.Edges.remove(key);
+            this.modCount++;
+            return Nodes.remove(key);
+        }
+
 
     private void removeIngoingEdges(int key) {
-        Iterator<EdgeData> it = this.reversedEdgeIter(key);
-        EdgeData edge;
-        while(it.hasNext()){
-            edge = it.next();
-            if(edge.getDest()==key){
-                it.remove();
-            }
+        Set<Integer> toRemove = this.reversedEdges.get(key).keySet();
+        for(int dest : toRemove){
+            this.removeEdge(dest, key);
         }
+        this.reversedEdges.remove(key);
     }
 
     @Override
     public EdgeData removeEdge(int src, int dest) {
         if (this.Nodes.containsKey(src) && this.Nodes.containsKey(dest) && this.Edges.get(src).containsKey(dest)) {
             this.modCount++;
-            return Edges.get(src).remove(dest);
+            this.edgeCounter--;
+            this.reversedEdges.get(dest).remove(src);
+            return this.Edges.get(src).remove(dest);
         } else throw new IllegalArgumentException("This Graph Doesn't Hold This Edge! Please Enter A Valid Value!");
     }
 
@@ -342,11 +389,7 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public int edgeSize() {
-        int total = 0;
-        for(int i = 0;i<Edges.size();i++){
-            total = total + Edges.get(i).size();
-        }
-        return total;
+        return this.edgeCounter;
     }
 
     @Override

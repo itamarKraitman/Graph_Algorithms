@@ -1,9 +1,9 @@
-# **Exercise 2 - Graph Algorithms GUI**
+# **Exercise 2 - Graph Algorithms main.java.GUI**
 >By Itamar Kraitman & Yuval Bubnovsky
 
 Object-Oriented Programming course @ Ariel University, exercise 2
 
-In this assignment, we were tasked with creating a GUI which will hold a directed weighted graph, run algorithms on said graph, present the results to the user and have save/load capabilities.
+In this assignment, we were tasked with creating a main.java.GUI which will hold a directed weighted graph, run algorithms on said graph, present the results to the user and have save/load capabilities.
 The interfaces were given to us and we were not allowed to alter them in any way.
 
 Instructions regarding running the code follow this Readme.
@@ -20,7 +20,7 @@ We chose this data structure because it allows us to have O(1) complexity in all
 # **Class Files**
 This section will only discuss the 3 major class files in the code (Directed Weighted Graph, Directed Weighted Graph Algorithms, Ex2), it will also include an honorable mention to the Dijkstra class.
 ## Ex2
-This is the "main" class of the code, it initialized the GUI and allows the construction of our graph objects
+This is the "main" class of the code, it initialized the main.java.GUI and allows the construction of our graph objects
 ## Directed Weighted Graph
 This class implements our data structure and represents a directed weighted graph, it includes iterators for the nodes & edges of the graph and also supports actions such as adding/removing nodes and connecting two vertices together with an edge.<br>
 Each graph element is represented as an object.
@@ -77,7 +77,7 @@ Make sure you download Ex2.jar from this repository, then navigate to the folder
 java -jar Ex2.jar YOUR_GRAPH.json
 ```
 
-where the JSON file should be formatted the same as the example files in the data folder - executing this command will boot up the GUI and load in the graph from the JSON file.
-<br>Once the GUI is up & running you can use it to save/load another graph file and run all the aforementioned algorithms on said graph.
+where the JSON file should be formatted the same as the example files in the data folder - executing this command will boot up the main.java.GUI and load in the graph from the JSON file.
+<br>Once the main.java.GUI is up & running you can use it to save/load another graph file and run all the aforementioned algorithms on said graph.
 
 [Dwiki]: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
