@@ -214,7 +214,6 @@ public class DWGraph implements DirectedWeightedGraph {
 
             @Override
             public EdgeData next() {
-
                     if (getMC() != counter) {
                         throw new RuntimeException("Graph Was Changed While Iterator Was Running!!!");
                     }

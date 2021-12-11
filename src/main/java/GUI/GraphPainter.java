@@ -37,6 +37,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         this.graph = g.getGraph();
         this.widthArrow = 8.0;
         this.heightArrow = 4.0;
+        this.setFocusable(true);
         getCoordinates();
         this.defaultEdgeColor = Color.BLACK;
         this.defaultNodeColor = Color.RED;
@@ -104,11 +105,11 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
             X = linearTransform(this.graph.getNode(temp.getSrc()).getPosition());
             Y = linearTransform(this.graph.getNode(temp.getDest()).getPosition());
             graphic.setColor(this.defaultEdgeColor);
-            drawArrow(graphic, X[0], X[1], Y[0], Y[1]);
+            drawArrow(graphic, temp,X[0], X[1], Y[0], Y[1]);
             // drawing weight
             graphic.setColor(Color.BLUE);
             graphic.setFont(new Font("Ariel", Font.BOLD, 12));
-            String weight = temp.getWeight() + "";
+//            String weight = temp.getWeight() + "";
 //            weight = weight.substring(0, weight.indexOf(".") + 5);
 //            graphic.drawString(weight,(int)X[0] + 2,(int)Y[1] + 2);
         }
@@ -138,7 +139,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
     }
 
     // Credit: https://coderanch.com/t/339505/java/drawing-arrows
-    private void drawArrow(Graphics g, double xSrc, double ySrc, double xDest, double yDest) {
+    private void drawArrow(Graphics g, EdgeData temp,double xSrc, double ySrc, double xDest, double yDest) {
         // init vars via formulas
         double xHeadArrow1, xHeadArrow2, yHeadArrow1, yHeadArrow2; // which combine to 2 extra points that create triangular for the arrow head
         double delX = (xDest - xSrc), delY = (yDest - ySrc); // cal delta x,y
@@ -158,6 +159,10 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         g.drawLine((int) (xSrc), (int) (ySrc), (int) (xDest), (int) (yDest));
         // draw arrow head
         g.drawPolygon(xpoints, ypoints, 3);
+        g.setColor(Color.BLUE);
+        String weight = temp.getWeight() + "";
+        weight = weight.substring(0, weight.indexOf(".") + 5);
+        g.drawString(weight,(int) (xSrc), (int) (yDest));
     }
 
     @Override
