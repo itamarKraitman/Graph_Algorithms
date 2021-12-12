@@ -117,8 +117,9 @@ public class UserMenu extends JMenuBar implements ActionListener {
 //                double[] XY;
 //                XY = painter.linearTransform(node.getPosition());
                 this.graphAlgo.getGraph().addNode(node);
-//                this.painter.refreshPainter(graphAlgo);
+                this.painter.refreshPainter(graphAlgo);
                 this.painter = new GraphPainter(graphAlgo);
+
                 getTopLevelAncestor().repaint();
 //                repaint();
             }

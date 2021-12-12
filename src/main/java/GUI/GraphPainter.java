@@ -46,7 +46,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         this.addMouseWheelListener(this);
     }
 
-    private void getCoordinates() {
+    public void getCoordinates() {
         Iterator<NodeData> it = this.graph.nodeIter();
         NodeData temp;
         this.min_x = 0;
