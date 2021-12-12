@@ -1,4 +1,5 @@
 package main.java;
+
 import main.java.Algorithms.DWGraphAlgo;
 //import main.java.main.java.GUI.Menu;
 import main.java.GUI.*;
@@ -15,39 +16,51 @@ import java.util.Scanner;
 public class Ex2 {
     /**
      * This static function will be used to test your implementation
+     *
      * @param json_file - a json file (e.g., G1.json - G3.gson)
      * @return
      */
+    // TODO: implement test for this
     public static DirectedWeightedGraph getGrapg(String json_file) {
         try {
             return new DWGraph(json_file);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new DWGraph();
         }
     }
+
     /**
      * This static function will be used to test your implementation
+     *
      * @param json_file - a json file (e.g., G1.json - G3.gson)
      * @return
      */
+    // TODO: implement test for this
     public static DirectedWeightedGraphAlgorithms getGrapgAlgo(String json_file) {
         DirectedWeightedGraphAlgorithms ans = new DWGraphAlgo();
         ans.init(getGrapg(json_file));
         return ans;
     }
+
     /**
      * This static function will run your main.java.GUI using the json file.
-     * @param json_file - a json file (e.g., G1.json - G3.gson)
      *
+     * @param json_file - a json file (e.g., G1.json - G3.gson)
      */
+    // TODO: start implementing main.java.GUI & test it
     public static void runGUI(String json_file) {
         DirectedWeightedGraphAlgorithms graphAlgo = getGrapgAlgo(json_file);
         new FrameWindow(graphAlgo);
     }
 
     public static void main(String[] args) {
-        runGUI(args[0]);
+        try {
+            runGUI(args[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Args Has No Input, Empty CMD Input");
+        }
     }
-    }
+
+}
