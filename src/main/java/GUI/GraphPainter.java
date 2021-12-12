@@ -162,9 +162,8 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         g.setColor(Color.BLUE);
         String weight = temp.getWeight() + "";
         weight = weight.substring(0, weight.indexOf(".") + 5);
-        g.drawString(weight,(int) (xSrc), (int) (yDest));
+        g.drawString(weight,(int) (xSrc * 0.7 + xDest * 0.3), (int) (ySrc * 0.7 + yDest * 0.3));
     }
-
     @Override
     public void mouseClicked(MouseEvent e) {
 //        int id = this.graphAlgo.getGraph().nodeSize() - 1;
