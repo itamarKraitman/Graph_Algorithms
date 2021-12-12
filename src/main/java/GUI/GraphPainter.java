@@ -105,13 +105,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
             X = linearTransform(this.graph.getNode(temp.getSrc()).getPosition());
             Y = linearTransform(this.graph.getNode(temp.getDest()).getPosition());
             graphic.setColor(this.defaultEdgeColor);
-            drawArrow(graphic, temp,X[0], X[1], Y[0], Y[1]);
-            // drawing weight
-            graphic.setColor(Color.BLUE);
-            graphic.setFont(new Font("Ariel", Font.BOLD, 12));
-//            String weight = temp.getWeight() + "";
-//            weight = weight.substring(0, weight.indexOf(".") + 5);
-//            graphic.drawString(weight,(int)X[0] + 2,(int)Y[1] + 2);
+            drawArrow(graphic, temp, X[0], X[1], Y[0], Y[1]);
         }
 
         graphic.setStroke(this.nodeStroke);
@@ -139,7 +133,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
     }
 
     // Credit: https://coderanch.com/t/339505/java/drawing-arrows
-    private void drawArrow(Graphics g, EdgeData temp,double xSrc, double ySrc, double xDest, double yDest) {
+    private void drawArrow(Graphics g, EdgeData temp, double xSrc, double ySrc, double xDest, double yDest) {
         // init vars via formulas
         double xHeadArrow1, xHeadArrow2, yHeadArrow1, yHeadArrow2; // which combine to 2 extra points that create triangular for the arrow head
         double delX = (xDest - xSrc), delY = (yDest - ySrc); // cal delta x,y
@@ -161,9 +155,14 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         g.drawPolygon(xpoints, ypoints, 3);
         g.setColor(Color.BLUE);
         String weight = temp.getWeight() + "";
-        weight = weight.substring(0, weight.indexOf(".") + 5);
-        g.drawString(weight,(int) (xSrc * 0.7 + xDest * 0.3), (int) (ySrc * 0.7 + yDest * 0.3));
+        try {
+            weight = weight.substring(0, weight.indexOf(".") + 5);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        g.drawString(weight, (int) (xSrc * 0.7 + xDest * 0.3), (int) (ySrc * 0.7 + yDest * 0.3));
     }
+
     @Override
     public void mouseClicked(MouseEvent e) {
 //        int id = this.graphAlgo.getGraph().nodeSize() - 1;
@@ -213,13 +212,14 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        // https://www.javacodex.com/Swing/MouseWheelListener for more data
-        // ensure that the picture wont minimize to size that will be too close to zero zoom
-        // this way of implementation avoids from stuck picture cuz of too much zoom usage
+//         https://www.javacodex.com/Swing/MouseWheelListener for more data
+//         ensure that the picture wont minimize to size that will be too close to zero zoom
+//         this way of implementation avoids from stuck picture cuz of too much zoom usage
 //        double temp = ((double) -e.getWheelRotation()) / 7;
 //        if (this.zoomInOut + temp > 0.05) {
 //            this.zoomInOut = this.zoomInOut + temp;
 //            repaint();
+//        }
     }
 }
 
