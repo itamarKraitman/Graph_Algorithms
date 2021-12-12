@@ -1,0 +1,174 @@
+@startuml
+
+class DWGraph {
+    - Nodes: ConcurrentHashMap<Integer, NodeData>
+    - Edges: ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, EdgeData>>
+    - edgeCounter: int
+    - modeCount: int
+
+    + DWGraph (g: DWGraph)
+    + getNode (key: int) : NodeData
+    + getEdge (src: int, dest: int) : EdgeData
+    + addNode (n: NodeData) : void
+    + connect (src: int, dest: int, w: double) : void
+    + nodeIter () : Iterator<NodeData>
+    + edgeIter () : Iterator<EdgeData>
+    + edgeIter (node_id: int) : Iterator<EdgeData>
+    + reversedEdgeIter(node_id: int) : Iterator<EdgeData>
+    + removeNode (key: int) : NodeData
+    + removeEdge (src: int, dest: int) : EdgeData
+    + nodeSize () : int
+    + edgeSize () : int
+    + getMC () : int
+    + resetTag() : void
+}
+
+class DWGraphAlgo {
+    - graph : DWGraph
+    - filename: String
+
+    + DWGraphAlgo (filename: String)
+    + init (g: DirectedWeightedGraph) : void
+    + getGraph () : DirectedWeightedGraph
+    + copy () : DirectedWeightedGraph
+    + isConnected () : boolean
+    - DFS (graph: DWGraph, start_id: int)
+    + shortestPathDist (src: int, dest: int) : double
+    + shortestPath (src: int, dest: int) : List<NodeData>
+    + center () : NodeData
+    + tsp (cities: List<NodeData>) : List<NodeData>
+    + save (file: String) : boolean
+    + load (file: String) : boolean
+}
+
+class Edge {
+    - src: int
+    - dest: int
+    - w: double
+    - info: String
+    - tag: int
+
+    + getSrc () : int
+    + getDest () : int
+    + getWeight () : double
+    + getInfo () : String
+    + setInfo (s: String) : void
+    + getTag () : int
+    + setTag (t: int) : void
+}
+
+class Geo_Location {
+    - x: double
+    - y: double
+    - z: double
+
+    + x () : double
+    + y () : double
+    + z () : double
+    + distance (g: GeoLocation) : double
+}
+
+class Node {
+    - id: int
+    - location: GeoLocation
+    - weight: double
+    - info: String
+    - tag: int
+
+    + getKey () : int
+    + getLocation () : GeoLocation
+    + setLocation (p: GeoLocation) : void
+    + getWeight () : double
+    + setWeight (w: double) : void
+    + getInfo () : String
+    + setInfo (s: String) : void
+    + getTag () : int
+    + setTag (t: int) : void
+}
+
+class Dijkstra{
+    - src : NodeData
+    - currentGraph : DirectedWeightedGraph
+    - parents : HashMap<Integer,Integer>
+    - distance : HashMap<Integer, Double>
+}
+
+class Ex2 {
+    + getGrapg (json_file: String) : DirectedWeightedGraph
+    + getGrapgAlgo (json_file: String) : DirectedWeightedGraphAlgorithms
+    + runGUI (json_file: String) : void
+}
+
+interface DirectedWeightedGraph {
+    + getNode (key: int) : NodeData
+    + getEdge (src: int, dest: int) : EdgeData
+    + addNode (n: NodeData) : void
+    + connect (src: int, dest: int, w: double) : void
+    + nodeIter () : Iterator<NodeData>
+    + edgeIter () : Iterator<EdgeData>
+    + edgeIter (node_id: int) : Iterator<EdgeData>
+    + removeNode (key: int) : NodeData
+    + removeEdge (src: int, dest: int) : EdgeData
+    + nodeSize () : int
+    + edgeSize () : int
+    + getMC () : int
+}
+
+interface DirectedWeightedGraphAlgorithms {
+    + init (g: DirectedWeightedGraph) : void
+    + getGraph () : DirectedWeightedGraph
+    + copy () : DirectedWeightedGraph
+    + isConnected () : boolean
+    + shortestPathDist (src: int, dest: int) : double
+    + shortestPath (src: int, dest: int) : List<NodeData>
+    + center () : NodeData
+    + tsp (cities: List<NodeData>) : List<NodeData>
+    + save (file: String) : boolean
+    + load (file: String) : boolean
+}
+
+interface EdgeData {
+    + getSrc () : int
+    + getDest () : int
+    + getWeight () : double
+    + getInfo () : String
+    + setInfo (s: String) : void
+    + getTag () : int
+    + setTag (t: int) : void
+}
+
+interface GeoLocation {
+    + x () : double
+    + y () : double
+    + z () : double
+    + distance (g: GeoLocation) : double
+}
+
+interface NodeData {
+    + getKey () : int
+    + getLocation () : GeoLocation
+    + setLocation (p: GeoLocation) : void
+    + getWeight () : double
+    + setWeight (w: double) : void
+    + getInfo () : String
+    + setInfo (s: String) : void
+    + getTag () : int
+    + setTag (t: int) : void
+}
+
+Dijkstra --> DWGraph
+DWGraphAlgo --> Dijkstra
+DirectedWeightedGraph --> DWGraph
+DirectedWeightedGraphAlgorithms --> DWGraphAlgo
+EdgeData --> Edge
+GeoLocation --> Geo_Location
+NodeData --> Node
+GeoLocation --> NodeData
+GeoLocation --> Node
+EdgeData --> NodeData
+EdgeData --> DirectedWeightedGraph
+NodeData --> DirectedWeightedGraph
+DirectedWeightedGraph --> DirectedWeightedGraphAlgorithms
+Ex2 --> DirectedWeightedGraphAlgorithms
+
+@enduml

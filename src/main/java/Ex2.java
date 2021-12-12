@@ -18,7 +18,6 @@ public class Ex2 {
      * @param json_file - a json file (e.g., G1.json - G3.gson)
      * @return
      */
-    // TODO: implement test for this
     public static DirectedWeightedGraph getGrapg(String json_file) {
         try {
             return new DWGraph(json_file);
@@ -33,7 +32,6 @@ public class Ex2 {
      * @param json_file - a json file (e.g., G1.json - G3.gson)
      * @return
      */
-    // TODO: implement test for this
     public static DirectedWeightedGraphAlgorithms getGrapgAlgo(String json_file) {
         DirectedWeightedGraphAlgorithms ans = new DWGraphAlgo();
         ans.init(getGrapg(json_file));
@@ -44,32 +42,12 @@ public class Ex2 {
      * @param json_file - a json file (e.g., G1.json - G3.gson)
      *
      */
-    // TODO: start implementing main.java.GUI & test it
     public static void runGUI(String json_file) {
         DirectedWeightedGraphAlgorithms graphAlgo = getGrapgAlgo(json_file);
         new FrameWindow(graphAlgo);
     }
 
     public static void main(String[] args) {
-        String filePath = "src/main/java/data/G2.json";
         runGUI(args[0]);
     }
-//        if(args.length != 0){
-//            try{
-//                runGUI(args[0]);
-//            }
-//            catch (Exception emptyArgs){
-//                try{
-//                    runGUI("data\\" + args[0]);
-//                }
-//                catch (Exception e){
-//                    System.out.println("File Not Found: Empty Command Line Arguments And No File In Data Folder!");
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//        else{
-//            System.out.println("You Didn't Input Any File!");
-//        }
-//    }
     }

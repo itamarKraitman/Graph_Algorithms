@@ -80,4 +80,7 @@ java -jar Ex2.jar YOUR_GRAPH.json
 where the JSON file should be formatted the same as the example files in the data folder - executing this command will boot up the main.java.GUI and load in the graph from the JSON file.
 <br>Once the main.java.GUI is up & running you can use it to save/load another graph file and run all the aforementioned algorithms on said graph.
 
+## **UML Diagram**
+The UML Diagram, generated with Planet UML plugin for IntelliJ is available in the repository files.
+
 [Dwiki]: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm

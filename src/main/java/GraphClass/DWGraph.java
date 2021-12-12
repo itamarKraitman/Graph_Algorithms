@@ -31,17 +31,14 @@ public class DWGraph implements DirectedWeightedGraph {
             JsonObject fileObject = fileElement.getAsJsonObject();
             JsonArray arrayOfEdges = fileObject.get("Edges").getAsJsonArray();
 
-
             for (JsonElement graphElement : arrayOfEdges) {
                 JsonObject graphEdge = graphElement.getAsJsonObject();
                 int source = graphEdge.get("src").getAsInt();
                 double weight = graphEdge.get("w").getAsDouble();
                 int destination = graphEdge.get("dest").getAsInt();
 
-
                 Edge edge = new Edge(source, destination, weight);
                 ConcurrentHashMap<Integer, EdgeData> tempEdge = new ConcurrentHashMap<>();
-
 
                 if (Edges.containsKey(source)) {
                     Edges.get(source).put(destination, edge);
@@ -53,17 +50,14 @@ public class DWGraph implements DirectedWeightedGraph {
                 }
             }
 
-
             for (JsonElement graphElement : arrayOfEdges) {
                 JsonObject graphEdge = graphElement.getAsJsonObject();
                 int source = graphEdge.get("dest").getAsInt();
                 double weight = graphEdge.get("w").getAsDouble();
                 int destination = graphEdge.get("src").getAsInt();
 
-
                 Edge edge = new Edge(source, destination, weight);
                 ConcurrentHashMap<Integer, EdgeData> tempEdge = new ConcurrentHashMap<>();
-
 
                 if (reversedEdges.containsKey(source)) {
                     reversedEdges.get(source).put(destination, edge);
@@ -73,23 +67,19 @@ public class DWGraph implements DirectedWeightedGraph {
                 }
             }
 
-
             JsonArray arrayOfNodes = fileObject.get("Nodes").getAsJsonArray();
             for (JsonElement graphElement : arrayOfNodes) {
                 JsonObject graphNode = graphElement.getAsJsonObject();
                 String position = graphNode.get("pos").getAsString();
                 String[] positions = position.split("[,]");
 
-
                 double x = Double.parseDouble(positions[0]);
                 double y = Double.parseDouble(positions[1]);
                 double z = Double.parseDouble(positions[2]);
                 int id = graphNode.get("id").getAsInt();
 
-
                 Geo_Location pos = new Geo_Location(x, y, z);
                 Node node = new Node(id, pos);
-
 
                 Nodes.put(node.getKey(), node);
             }
@@ -105,6 +95,7 @@ public class DWGraph implements DirectedWeightedGraph {
         this.Edges = g.Edges;
         this.reversedEdges = g.reversedEdges;
         this.modCount = g.modCount;
+        this.edgeCounter = g.edgeCounter;
     }
 
     @Override
@@ -378,10 +369,6 @@ public class DWGraph implements DirectedWeightedGraph {
             if (this.Edges.get(srcKey).containsKey(key))
                 this.removeEdge(srcKey, key);
         }
-//        Set<Integer> toRemove = this.reversedEdges.get(key).keySet();
-//        for(int dest : toRemove){
-//            this.removeEdge(dest, key);
-//        }
         this.reversedEdges.remove(key);
     }
 
@@ -410,7 +397,6 @@ public class DWGraph implements DirectedWeightedGraph {
         return this.modCount;
     }
 
-    // TODO: add this test
     public void resetTag() {
         Iterator<NodeData> it = this.nodeIter();
         NodeData pointer;

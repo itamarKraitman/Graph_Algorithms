@@ -46,7 +46,7 @@ public class Edge implements EdgeData {
 
     @Override
     public String getInfo() {
-        return "\"src\": "+this.getSrc()+",\n\"w\": "+this.getWeight()+",\n\"dest\": "+this.getDest();
+        return "\"src\": " + this.getSrc() + ",\n\"w\": " + this.getWeight() + ",\n\"dest\": " + this.getDest();
     }
 
     @Override
@@ -63,14 +63,4 @@ public class Edge implements EdgeData {
     public void setTag(int t) {
         this.tag = t;
     }
-
-
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("src: ").append(this.src).append(".\n");
-//        sb.append("dest: ").append(this.dest).append(".\n");
-//        sb.append("weight: ").append(this.weight).append(".\n");
-//        sb.append("tag: ").append(this.tag).append(".\n");
-//        return sb.substring(0);
-//    }
 }

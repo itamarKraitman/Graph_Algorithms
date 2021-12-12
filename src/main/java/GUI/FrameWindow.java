@@ -10,6 +10,10 @@ public class FrameWindow extends JFrame {
     DirectedWeightedGraphAlgorithms graphAlgo;
     UserMenu menu;
 
+    /**
+     * Generate the frame window upon which a panel and a user menu will be placed
+     * @param g, Directed Weighted Graph represented using HashMaps
+     */
     public FrameWindow(DirectedWeightedGraphAlgorithms g){
 
         this.graphAlgo = g;

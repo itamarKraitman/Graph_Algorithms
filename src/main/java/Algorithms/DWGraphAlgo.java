@@ -9,10 +9,7 @@ import main.java.api.DirectedWeightedGraph;
 import main.java.api.DirectedWeightedGraphAlgorithms;
 import main.java.api.EdgeData;
 import main.java.api.NodeData;
-
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -45,13 +42,19 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         return new DWGraph(this.graph);
     }
 
+    // We check if the given directed weighted graph is strongly connected by running DFS twice,
+    // once on the regular graph, and once on the transposed graph, if both DFS visit ALL nodes then
+    // graph is connected.
     @Override
     public boolean isConnected() {
+
         Iterator<NodeData> vertex = this.getGraph().nodeIter();
         int v = vertex.next().getKey();
         this.graph.resetTag();
         Iterator<NodeData> it = this.getGraph().nodeIter();
         NodeData pointer;
+
+        // Boolean flag here to indicate if DFS will use regular iterator or transposed one
         DFS(this.getGraph(), v, true);
         while (it.hasNext()) {
             pointer = it.next();
@@ -59,9 +62,11 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
                 return false;
             }
         }
+
         this.graph.resetTag();
         Iterator<NodeData> itReversed = this.getGraph().nodeIter();
         NodeData pointerReversed;
+
         DFS(this.getGraph(), v, false);
         while (itReversed.hasNext()) {
             pointerReversed = itReversed.next();
@@ -72,12 +77,15 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         return true;
     }
 
+    // A DFS implementation using a stack
     private void DFS(DirectedWeightedGraph g, int v, boolean b) {
+
         Stack<NodeData> stack = new Stack<>();
-        EdgeData u = null;
+        EdgeData u;
         Iterator<EdgeData> it;
         DWGraph gg = (DWGraph) g; // This is only to use the reversed Edge iterator
         stack.push(g.getNode(v));
+
         while (stack.size() != 0) {
             v = stack.peek().getKey();
             stack.pop();
@@ -107,7 +115,7 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         }
         Dijkstra d = new Dijkstra(this.graph, this.graph.getNode(src));
         d.DijkstraAlgo(src);
-        return d.getDistBetSrcToDest(dest);
+        return d.getBestDistSrcToDest(dest);
     }
 
     @Override
@@ -122,18 +130,22 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         return d.shortestPathNodes(dest);
     }
 
+    // We find the center of a graph by running Dijkstr'a algorithm for all nodes, finding the node with the maximum distance to all other node,
+    // then, taking the minimum of those distances and establishing that node as the center of the graph.
     @Override
     public NodeData center() {
 
         List<Dijkstra> ld = new ArrayList<>();
         Iterator<NodeData> itN = this.graph.nodeIter();
         NodeData current = null;
+
         while (itN.hasNext()) {
             current = itN.next();
             Dijkstra d = new Dijkstra(this.graph, current);
             d.DijkstraAlgo(current.getKey());
             ld.add(d);
         }
+
         double shortest = Double.MAX_VALUE, temp;
         for (Dijkstra dd : ld) {
             temp = dd.maxLongestDist();
@@ -155,26 +167,33 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         List<NodeData> needToVisit = new LinkedList<>();
         NodeData tempNode;
         HashMap<Integer, Boolean> visited = new HashMap<>();
+
         for (NodeData city : cities) {
             visited.put(city.getKey(), false);
             needToVisit.add(city);
         }
+
         int tempDest;
         double travelWeight = 0;
         cityTraversal.add(needToVisit.get(0));
+
         // In case the travelWeight is infinity that means no viable path is available and we exit the algorithm and return
         // Credit for this conditional statement goes to Amir Sabag.
         while (!needToVisit.isEmpty() && travelWeight < Double.MAX_VALUE) {
             tempNode = cityTraversal.get(cityTraversal.size() - 1);
             needToVisit.remove(tempNode);
             visited.replace(tempNode.getKey(), true);
+            // Find the least-cost path to the next node in the list
             tempDest = minDirectedPath(tempNode.getKey(), visited, needToVisit);
+
             if (tempDest == -1) {
                 Dijkstra d = new Dijkstra(this.graph, tempNode);
                 d.DijkstraAlgo(tempNode.getKey()); // dijkstra algo
+                // Construct a path using Dijkstr'a algorithm, stepping out of the sub-group of vertices
                 List<NodeData> undirectedPath = minUndirectedPath(d, tempNode, visited, needToVisit);
+
                 if (undirectedPath != null) {
-                    travelWeight += d.getDistBetSrcToDest(undirectedPath.get(undirectedPath.size() - 1).getKey());
+                    travelWeight += d.getBestDistSrcToDest(undirectedPath.get(undirectedPath.size() - 1).getKey());
                     undirectedPath.remove(0);
                     cityTraversal.addAll(undirectedPath);
                     needToVisit.removeAll(undirectedPath);
@@ -188,7 +207,6 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         return cityTraversal;
     }
 
-    // if one of the neighbours
     private int minDirectedPath(int src, HashMap<Integer, Boolean> visited, List<NodeData> needToVisit) {
         double minPath = Double.MAX_VALUE;
         int minDest = -1;
@@ -209,8 +227,8 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
         double tempDist = Double.MAX_VALUE;
         int tempKey = -1;
         for (NodeData node : needToVisit) {
-            if (d.getDistBetSrcToDest(node.getKey()) < tempDist && !visited.get(node.getKey())) {
-                tempDist = d.getDistBetSrcToDest(node.getKey());
+            if (d.getBestDistSrcToDest(node.getKey()) < tempDist && !visited.get(node.getKey())) {
+                tempDist = d.getBestDistSrcToDest(node.getKey());
                 tempKey = node.getKey();
             }
         }
@@ -232,6 +250,7 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
             Iterator<NodeData> nodeIter = this.getGraph().nodeIter();
             EdgeData currentEdge;
             NodeData currentNode;
+
             while(edgeIter.hasNext()){
                 currentEdge = edgeIter.next();
                 JsonObject edgeObj = new JsonObject();
@@ -240,6 +259,7 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
                 edgeObj.addProperty("dest",currentEdge.getDest());
                 edges.add(edgeObj);
             }
+
             while(nodeIter.hasNext()){
                 currentNode = nodeIter.next();
                 JsonObject nodeObj = new JsonObject();
@@ -250,10 +270,12 @@ public class DWGraphAlgo implements DirectedWeightedGraphAlgorithms {
                 nodeObj.addProperty("id", currentNode.getKey());
                 nodes.add(nodeObj);
             }
+
             graph.add("Edges",edges);
             graph.add("Nodes",nodes);
             Files.writeString(Paths.get(file), gson.toJson(graph));
             return true;
+
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("An Error Occured!");

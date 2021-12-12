@@ -26,7 +26,12 @@ public class UserMenu extends JMenuBar implements ActionListener {
     JFileChooser fc;
     JMenu fileMnu, drawMnu, algoMnu;
 
-
+    /**
+     * A User Menu to accept user input and run functions as needed.
+     * @param g, Directed Weighted Graph represented using HashMaps
+     * @param painter, a Panel upon which the actual painting of the graph is calculated
+     * @param frame, a Java Frame to act as a container for the panel & user menu
+     */
     public UserMenu(DirectedWeightedGraphAlgorithms g, GraphPainter painter, FrameWindow frame) {
         this.frame = frame;
         this.painter = painter;
@@ -110,18 +115,14 @@ public class UserMenu extends JMenuBar implements ActionListener {
                 double finalX = Double.parseDouble(x_pos);
                 double finalY = Double.parseDouble(y_pos);
 
-//                Geo_Location loc = new Geo_Location(Double.parseDouble(x_pos), Double.parseDouble(y_pos), 0);
                 Geo_Location loc = new Geo_Location(finalX, finalY, 0);
                 NodeData node = new Node(Integer.parseInt(id), loc);
 
-//                double[] XY;
-//                XY = painter.linearTransform(node.getPosition());
                 this.graphAlgo.getGraph().addNode(node);
                 this.painter.refreshPainter(graphAlgo);
                 this.painter = new GraphPainter(graphAlgo);
 
                 getTopLevelAncestor().repaint();
-//                repaint();
             }
             case "Add Edge" -> {
                 String src = JOptionPane.showInputDialog(this, "Enter Source Vertex");
@@ -187,7 +188,6 @@ public class UserMenu extends JMenuBar implements ActionListener {
                 } else {
                     this.graphAlgo.load(this.fc.getSelectedFile().getPath());
                     this.painter.refreshPainter(this.graphAlgo);
-                    //this.painter.setColors(this.painter.defaultNodeColor, this.painter.defaultEdgeColor);
                     JOptionPane.showMessageDialog(this, "Load Success");
                     getTopLevelAncestor().repaint();
                 }

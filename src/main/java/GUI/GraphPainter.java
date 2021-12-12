@@ -7,8 +7,6 @@ import main.java.api.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
-import java.awt.geom.QuadCurve2D;
 import java.util.Iterator;
 
 public class GraphPainter extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
@@ -46,6 +44,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         this.addMouseWheelListener(this);
     }
 
+    // Determining our boundaries for drawing
     public void getCoordinates() {
         Iterator<NodeData> it = this.graph.nodeIter();
         NodeData temp;
@@ -53,6 +52,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         this.min_y = 0;
         this.max_x = 0;
         this.max_y = 0;
+
         if (it.hasNext()) {
             temp = it.next();
             min_x = temp.getPosition().x();
@@ -60,6 +60,7 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
             max_x = temp.getPosition().x();
             max_y = temp.getPosition().y();
         }
+
         while (it.hasNext()) {
             temp = it.next();
             if (temp.getPosition().x() < this.min_x) {
@@ -90,6 +91,8 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         g.drawImage(bufferImage, 0, 0, this);
     }
 
+    // This function draws the Vertices & Edges of the graph, we use a linear transformation to adapt the x,y values  in order
+    // to correctly represent the graph on the panel
     @Override
     public void paintComponents(Graphics g) {
         Graphics2D graphic = (Graphics2D) g;
@@ -97,21 +100,24 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
         double[] X, Y;
         Iterator<EdgeData> edgeIt = this.graph.edgeIter();
         EdgeData temp;
+
         while (edgeIt != null && edgeIt.hasNext()) {
             temp = edgeIt.next();
             if (temp == null) {
                 break;
             }
+
             X = linearTransform(this.graph.getNode(temp.getSrc()).getPosition());
             Y = linearTransform(this.graph.getNode(temp.getDest()).getPosition());
             graphic.setColor(this.defaultEdgeColor);
-            drawArrow(graphic, temp, X[0], X[1], Y[0], Y[1]);
+            drawEdgeArrow(graphic, temp, X[0], X[1], Y[0], Y[1]);
         }
 
         graphic.setStroke(this.nodeStroke);
         Iterator<NodeData> nodeIt = this.graph.nodeIter();
         NodeData tempNode;
         double[] XY;
+
         while (nodeIt.hasNext()) {
             tempNode = nodeIt.next();
             XY = linearTransform(tempNode.getPosition());
@@ -123,37 +129,40 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
 
     // Credit to StackOverflow & Linear Algebra for this formula:
     public double[] linearTransform(GeoLocation point) {
-        double delCurrX = this.max_x - point.x();
-        double delPicX = this.max_x - this.min_x;
-        double delCurrY = this.max_y - point.y();
-        double delPicY = this.max_y - this.min_y;
-        double x = (delCurrX / delPicX * (this.width) * 0.8 + (this.height) * 0.1);
-        double y = (delCurrY / delPicY * (this.width) * 0.8 + (this.height) * 0.1);
+        double xValue = this.max_x - point.x();
+        double calculatedX = this.max_x - this.min_x;
+        double yValue = this.max_y - point.y();
+        double calculatedY = this.max_y - this.min_y;
+        double x = (xValue / calculatedX * (this.width) * 0.8 + (this.height) * 0.1);
+        double y = (yValue / calculatedY * (this.width) * 0.8 + (this.height) * 0.1);
         return new double[]{x, y};
     }
 
     // Credit: https://coderanch.com/t/339505/java/drawing-arrows
-    private void drawArrow(Graphics g, EdgeData temp, double xSrc, double ySrc, double xDest, double yDest) {
+    private void drawEdgeArrow(Graphics g, EdgeData temp, double xSrc, double ySrc, double xDest, double yDest) {
         // init vars via formulas
-        double xHeadArrow1, xHeadArrow2, yHeadArrow1, yHeadArrow2; // which combine to 2 extra points that create triangular for the arrow head
-        double delX = (xDest - xSrc), delY = (yDest - ySrc); // cal delta x,y
-        double distBetNodes = Math.sqrt(delX * delX + delY * delY); // cal distance src->dest nodes
-        double sinVal = delY / distBetNodes, cosVal = delX / distBetNodes; // const math via algebra, basic rules of sin/cos
+        double xHead1, xHead2, yHead1, yHead2; // which combine to 2 extra points that create triangular for the arrow head
+        double xValue = (xDest - xSrc);
+        double yValue = (yDest - ySrc);
+        double distBetNodes = Math.sqrt(xValue * xValue + yValue * yValue);
+        double sinVal = yValue / distBetNodes;
+        double cosVal = xValue / distBetNodes;
 
-        yHeadArrow1 = (distBetNodes - this.widthArrow) * sinVal + this.heightArrow * cosVal + ySrc; // via formula
-        xHeadArrow1 = (distBetNodes - this.widthArrow) * cosVal - this.heightArrow * sinVal + xSrc; // via formula
+        yHead1 = (distBetNodes - this.widthArrow) * sinVal + this.heightArrow * cosVal + ySrc; // formula
+        xHead1 = (distBetNodes - this.widthArrow) * cosVal - this.heightArrow * sinVal + xSrc; // formula
 
-        yHeadArrow2 = (distBetNodes - this.widthArrow) * sinVal + -1 * (this.heightArrow) * cosVal + ySrc; // via formula
-        xHeadArrow2 = (distBetNodes - this.widthArrow) * cosVal - -1 * (this.heightArrow) * sinVal + xSrc; // via formula
+        yHead2 = (distBetNodes - this.widthArrow) * sinVal + -1 * (this.heightArrow) * cosVal + ySrc; // formula
+        xHead2 = (distBetNodes - this.widthArrow) * cosVal - -1 * (this.heightArrow) * sinVal + xSrc; // formula
 
-        // arrays for x,y cordinates to draw the polygon
-        int[] xpoints = {(int) (xDest), (int) (xHeadArrow1), (int) (xHeadArrow2)};
-        int[] ypoints = {(int) (yDest), (int) (yHeadArrow1), (int) (yHeadArrow2)};
-        // draw arrow line
+        // Arrays are needed for x,y for the painter to draw the polygon
+        int[] xpoints = {(int) (xDest), (int) (xHead1), (int) (xHead2)};
+        int[] ypoints = {(int) (yDest), (int) (yHead1), (int) (yHead2)};
+
         g.drawLine((int) (xSrc), (int) (ySrc), (int) (xDest), (int) (yDest));
-        // draw arrow head
         g.drawPolygon(xpoints, ypoints, 3);
         g.setColor(Color.BLUE);
+
+        // Draw the edge's weight
         String weight = temp.getWeight() + "";
         try {
             weight = weight.substring(0, weight.indexOf(".") + 5);
@@ -165,11 +174,6 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseClicked(MouseEvent e) {
-//        int id = this.graphAlgo.getGraph().nodeSize() - 1;
-//        Geo_Location loc = new Geo_Location(e.getX(), e.getY(), 0);
-//        NodeData node = new Node(id, loc);
-//        this.graphAlgo.getGraph().addNode(node);
-//        getTopLevelAncestor().repaint();
     }
 
     @Override
@@ -198,11 +202,6 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseDragged(MouseEvent e) {
-//        double xMPrev = mousePosPrev.getX(), yMPrev = mousePosPrev.getY();
-//        double xMNext = mousePosNext.getX(), yMNext = mousePosNext.getY();
-//        double zoomedX = xMPrev + (e.getX() - xMNext) / this.zoomInOut, zoomedY = yMPrev + (e.getY() - yMNext) / this.zoomInOut;
-//        mousePoint.setLocation(zoomedX, zoomedY);
-//        repaint();
     }
 
     @Override
@@ -212,14 +211,6 @@ public class GraphPainter extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-//         https://www.javacodex.com/Swing/MouseWheelListener for more data
-//         ensure that the picture wont minimize to size that will be too close to zero zoom
-//         this way of implementation avoids from stuck picture cuz of too much zoom usage
-//        double temp = ((double) -e.getWheelRotation()) / 7;
-//        if (this.zoomInOut + temp > 0.05) {
-//            this.zoomInOut = this.zoomInOut + temp;
-//            repaint();
-//        }
     }
 }
 
